@@ -1,0 +1,20 @@
+{
+    "manifest_version": 3,
+    "name": "Chromatic",
+    "version": "1.0",
+    "description": "Extract the dominant color palette from the visible area of any webpage",
+    "permissions": ["activeTab"],
+    "action": {
+      "default_popup": "popup.html",
+      "default_icon": {
+        "16": "icon16.png",
+        "48": "icon48.png",
+        "128": "icon128.png"
+      }
+    },
+    "icons": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+}

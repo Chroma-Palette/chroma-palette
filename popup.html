@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chromatic</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      width: 380px;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #1a1a1a;
+      color: #ffffff;
+    }
+    .container {
+      padding: 24px;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0 0 24px;
+      text-align: center;
+      font-size: 32px;
+      letter-spacing: -0.5px;
+    }
+    .instruction-text {
+      text-align: center;
+      color: #a0a0a0;
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+    #palette {
+      min-height: 200px;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 8px;  /* Add some space above the color grid */
+    }
+    #palette.grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      padding: 16px;
+    }
+    .initial-text {
+      text-align: center;
+      color: #a0a0a0;
+      font-size: 16px;
+      line-height: 1.5;
+      max-width: 80%;
+    }
+    .color-box {
+      aspect-ratio: 1 / 1;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+    }
+    .color-box::after {
+      content: "Click to copy";
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    .color-box:hover::after {
+      opacity: 1;
+    }
+    .color-info {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .color-hex {
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 3px rgba(0, 0, 0, 0.5), 0 0 3px rgba(255, 255, 255, 0.5);
+      color: #fff;
+    }
+    .color-rgb {
+      font-size: 10px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      margin-top: 4px;
+      color: rgba(255, 255, 255, 0.8);
+      position: absolute;
+      top: calc(50% + 14px);
+    }
+    .color-box:hover .color-rgb {
+      opacity: 1;
+    }
+    .copy-feedback {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(255, 255, 255, 0.9);
+      color: #1a1a1a;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    #analyzeButton {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      margin-top: 24px;
+      background-color: #4a4a4a;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    #analyzeButton:hover {
+      background-color: #5a5a5a;
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Chromatic</h1>
+    <p class="instruction-text">Click on any color to copy its hex code</p>
+    <div id="palette">
+      <p class="initial-text">Click the button below to extract colors from the current page</p>
+    </div>
+    <button id="analyzeButton">Extract Palette</button>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
