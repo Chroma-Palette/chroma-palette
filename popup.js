@@ -1,10 +1,21 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const palette = document.getElementById('palette');
-    const analyzeButton = document.getElementById('analyzeButton');
+/**
+ * This script handles the main functionality of the Chromatic extension.
+ * It manages color extraction, display, and user interactions.
+ */
 
+/**
+ * Initializes the extension's popup interface.
+ * Sets up event listeners for the analyze button.
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    const analyzeButton = document.getElementById('analyzeButton');
     analyzeButton.addEventListener('click', getPageColors);
 });
 
+/**
+ * Captures the visible tab and extracts colors from it.
+ * Handles potential errors during the process.
+ */
 function getPageColors() {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         chrome.tabs.captureVisibleTab(null, { format: 'png' }, function (dataUrl) {
@@ -26,6 +37,10 @@ function getPageColors() {
     });
 }
 
+/**
+ * Displays the extracted colors in the popup interface.
+ * @param {Array} colors - Array of RGB color arrays.
+ */
 function displayColors(colors) {
     const palette = document.getElementById('palette');
     palette.innerHTML = '';
@@ -50,10 +65,22 @@ function displayColors(colors) {
     });
 }
 
+/**
+ * Converts RGB color values to a hex code string.
+ * @param {number} r - Red value (0-255)
+ * @param {number} g - Green value (0-255)
+ * @param {number} b - Blue value (0-255)
+ * @return {string} Hex color code
+ */
 function rgbToHex(r, g, b) {
     return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
 }
 
+/**
+ * Copies the given text to clipboard and shows feedback.
+ * @param {string} text - Text to copy
+ * @param {HTMLElement} colorBox - The color box element that was clicked
+ */
 function copyToClipboard(text, colorBox) {
     navigator.clipboard.writeText(text).then(() => {
         const feedbackElement = document.createElement('div');
@@ -66,6 +93,10 @@ function copyToClipboard(text, colorBox) {
     });
 }
 
+/**
+ * Displays an error message in the popup interface.
+ * @param {string} message - The error message to display
+ */
 function displayError(message) {
     const palette = document.getElementById('palette');
     palette.innerHTML = `
@@ -77,6 +108,11 @@ function displayError(message) {
     palette.classList.remove('grid');
 }
 
+/**
+ * Formats error messages for user-friendly display.
+ * @param {string} message - The original error message
+ * @return {string} Formatted error message
+ */
 function formatErrorMessage(message) {
     if (message.includes("MAX_CAPTURE_VISIBLE_TAB_CALLS")) {
         return "Too many requests. Please wait a moment before trying again.";
