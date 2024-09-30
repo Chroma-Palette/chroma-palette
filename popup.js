@@ -9,7 +9,10 @@
  */
 document.addEventListener('DOMContentLoaded', () => {
     const analyzeButton = document.getElementById('analyzeButton');
-    analyzeButton.addEventListener('click', getPageColors);
+    analyzeButton.addEventListener('click', () => {
+        startBubbleAnimation();
+        getPageColors();
+    });
 });
 
 /**
@@ -60,7 +63,7 @@ function displayColors(colors) {
 
         colorInfo.appendChild(hexText);
         colorBox.appendChild(colorInfo);
-        colorBox.addEventListener('click', () => copyToClipboard(hexCode, colorBox));
+        colorBox.addEventListener('click', () => copyToClipboard(hexCode, colorBox, colors));
         palette.appendChild(colorBox);
     });
 }
@@ -81,13 +84,14 @@ function rgbToHex(r, g, b) {
  * @param {string} text - Text to copy
  * @param {HTMLElement} colorBox - The color box element that was clicked
  */
-function copyToClipboard(text, colorBox) {
+function copyToClipboard(text, colorBox, colors) {
     navigator.clipboard.writeText(text).then(() => {
         const feedbackElement = document.createElement('div');
         feedbackElement.className = 'copy-feedback';
         feedbackElement.textContent = 'Copied!';
         colorBox.appendChild(feedbackElement);
         setTimeout(() => colorBox.removeChild(feedbackElement), 1500);
+        createConfetti(colors);
     }).catch(err => {
         console.error('Failed to copy: ', err);
     });
@@ -118,4 +122,124 @@ function formatErrorMessage(message) {
         return "Too many requests. Please wait a moment before trying again.";
     }
     return message;
+}
+
+function createConfetti(colors) {
+    const confettiContainer = document.createElement('div');
+    confettiContainer.style.position = 'fixed';
+    confettiContainer.style.top = '0';
+    confettiContainer.style.left = '0';
+    confettiContainer.style.width = '100%';
+    confettiContainer.style.height = '100%';
+    confettiContainer.style.pointerEvents = 'none';
+    document.body.appendChild(confettiContainer);
+
+    const confettiCount = 50;
+    const gravity = 0.5;
+    const terminalVelocity = 5;
+    const drag = 0.075;
+    const confettis = [];
+
+    for (let i = 0; i < confettiCount; i++) {
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const confetti = {
+            color: `rgb(${color[0]}, ${color[1]}, ${color[2]})`,
+            dimensions: {
+                x: Math.random() * 10 + 5,
+                y: Math.random() * 10 + 5,
+            },
+            position: {
+                x: Math.random() * window.innerWidth,
+                y: -20,
+            },
+            rotation: Math.random() * 360,
+            scale: {
+                x: 1,
+                y: 1,
+            },
+            velocity: {
+                x: Math.random() * 6 - 3,
+                y: Math.random() * -15 - 15,
+            },
+        };
+        confettis.push(confetti);
+    }
+
+    function updateConfetti() {
+        confettiContainer.innerHTML = '';
+        confettis.forEach((confetti, index) => {
+            confetti.velocity.x += Math.random() > 0.5 ? Math.random() : -Math.random();
+            confetti.velocity.y += gravity;
+            confetti.velocity.x *= drag;
+            confetti.velocity.y = Math.min(confetti.velocity.y, terminalVelocity);
+            confetti.position.x += confetti.velocity.x;
+            confetti.position.y += confetti.velocity.y;
+            confetti.scale.y = Math.cos((confetti.position.y + confetti.rotation) * 0.1);
+
+            const confettiElement = document.createElement('div');
+            confettiElement.style.position = 'absolute';
+            confettiElement.style.width = `${confetti.dimensions.x}px`;
+            confettiElement.style.height = `${confetti.dimensions.y}px`;
+            confettiElement.style.backgroundColor = confetti.color;
+            confettiElement.style.transform = `translate3d(${confetti.position.x}px, ${confetti.position.y}px, 0) rotate(${confetti.rotation}deg) scale(${confetti.scale.x}, ${confetti.scale.y})`;
+            confettiContainer.appendChild(confettiElement);
+
+            if (confetti.position.y >= window.innerHeight) {
+                confettis.splice(index, 1);
+            }
+        });
+
+        if (confettis.length > 0) {
+            requestAnimationFrame(updateConfetti);
+        } else {
+            document.body.removeChild(confettiContainer);
+        }
+    }
+
+    requestAnimationFrame(updateConfetti);
+}
+
+function createRipple(event) {
+    const button = event.currentTarget;
+    const rippleContainer = button.nextElementSibling;
+    const circle = document.createElement("span");
+    const diameter = Math.max(button.clientWidth, button.clientHeight);
+    const radius = diameter / 2;
+
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
+    circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
+    circle.classList.add("ripple");
+
+    const ripple = rippleContainer.getElementsByClassName("ripple")[0];
+
+    if (ripple) {
+        ripple.remove();
+    }
+
+    rippleContainer.appendChild(circle);
+}
+
+function createBubble() {
+    const bubbleContainer = document.querySelector('.bubble-container');
+    const bubble = document.createElement('div');
+    bubble.classList.add('bubble');
+
+    const size = Math.random() * 30 + 10;
+    bubble.style.width = `${size}px`;
+    bubble.style.height = `${size}px`;
+    bubble.style.left = `${Math.random() * 100}%`;
+    bubble.style.animationDuration = `${Math.random() * 2 + 2}s`;
+
+    bubbleContainer.appendChild(bubble);
+
+    setTimeout(() => {
+        bubble.remove();
+    }, 4000);
+}
+
+function startBubbleAnimation() {
+    for (let i = 0; i < 10; i++) {
+        setTimeout(createBubble, i * 300);
+    }
 }
