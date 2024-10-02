@@ -1,5 +1,5 @@
 /**
- * This script handles the main functionality of the Chromatic extension.
+ * This script handles the main functionality of the Chroma Palette 🎨  extension.
  * It manages color extraction, display, and user interactions.
  */
 

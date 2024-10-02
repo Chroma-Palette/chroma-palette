@@ -1,10 +1,10 @@
-# Chromatic
+# Chroma Palette 🎨
 
-![Chromatic Logo](icon48.png)
+![Chroma Palette 🎨 Logo](icon48.png)
 
 ## Description
 
-Chromatic is a powerful Chrome extension that extracts the dominant color palette from the visible area of any webpage. Perfect for designers, developers, and color enthusiasts, Chromatic provides instant access to key colors used in web design, enabling quick color scheme analysis and inspiration.
+Chroma Palette 🎨 is a powerful Chrome extension that extracts the dominant color palette from the visible area of any webpage. Perfect for designers, developers, and color enthusiasts, Chroma Palette 🎨 provides instant access to key colors used in web design, enabling quick color scheme analysis and inspiration.
 
 ## Features
 
@@ -23,7 +23,7 @@ Chromatic is a powerful Chrome extension that extracts the dominant color palett
 ## Usage
 
 1. Navigate to any webpage
-2. Click the Chromatic icon in your Chrome toolbar
+2. Click the Chroma Palette 🎨 icon in your Chrome toolbar
 3. Click "Extract Palette" to analyze the visible area
 4. Click on any color swatch to copy its hex code
 
@@ -52,7 +52,7 @@ For support or queries, please open an issue or contact us at [mayank.singh08199
 
 ## Roadmap: Future Features
 
-To make Chromatic the #1 color palette extension worldwide:
+To make Chroma Palette 🎨 the #1 color palette extension worldwide:
 
 1. **Color Harmony Suggestions**: Provide complementary, analogous, and other color harmony suggestions based on extracted colors.
 
@@ -72,7 +72,7 @@ To make Chromatic the #1 color palette extension worldwide:
 
 9. **Color Trends**: Analyze and display color trends across popular websites or specific industries.
 
-10. **API Access**: Provide an API for developers to integrate Chromatic's functionality into their own tools.
+10. **API Access**: Provide an API for developers to integrate Chroma Palette 🎨's functionality into their own tools.
 
 11. **Multiple Color Models**: Support RGB, HSL, CMYK, and other color models in addition to HEX.
 
@@ -94,4 +94,4 @@ To make Chromatic the #1 color palette extension worldwide:
 
 20. **Color Palette Communities**: Create a platform for users to share and rate color palettes extracted from various websites.
 
-By implementing these features progressively, Chromatic can evolve into a comprehensive color tool that caters to a wide range of users, from casual enthusiasts to professional designers, solidifying its position as the leading color palette extension worldwide.
+By implementing these features progressively, Chroma Palette 🎨 can evolve into a comprehensive color tool that caters to a wide range of users, from casual enthusiasts to professional designers, solidifying its position as the leading color palette extension worldwide.
