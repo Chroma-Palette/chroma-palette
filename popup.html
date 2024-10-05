@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <!-- 
   This is the main popup interface for the Chroma Palette 🎨  extension.
@@ -8,7 +9,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chroma Palette 🎨</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet">
   <script src="color-thief.min.js"></script>
   <style>
     /* 
@@ -25,17 +28,20 @@
       background-color: #1a1a1a;
       color: #ffffff;
     }
+
     h1 {
       font-family: 'Playfair Display', serif;
       text-align: center;
       margin-bottom: 20px;
     }
+
     .instruction-text {
       text-align: center;
       color: #a0a0a0;
       font-size: 12px;
       margin-bottom: 20px;
     }
+
     #palette {
       background-color: #2a2a2a;
       border: 1px solid #3a3a3a;
@@ -44,12 +50,14 @@
       margin-bottom: 20px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
+
     #palette.grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
       padding: 16px;
     }
+
     .color-box {
       aspect-ratio: 1 / 1;
       border-radius: 8px;
@@ -61,13 +69,16 @@
       transition: all 0.3s ease;
       border: 2px solid transparent;
     }
+
     .color-box:hover {
       transform: scale(1.05);
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     }
+
     .color-info {
       text-align: center;
     }
+
     .color-hex {
       font-size: 14px;
       font-weight: 600;
@@ -75,6 +86,7 @@
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
       color: rgba(255, 255, 255, 0.9);
     }
+
     .initial-text {
       text-align: center;
       color: #a0a0a0;
@@ -83,6 +95,7 @@
       padding: 32px 16px;
       margin: 0;
     }
+
     #analyzeButton {
       width: 100%;
       padding: 12px 16px;
@@ -99,44 +112,106 @@
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       margin-top: 16px;
     }
+
     #analyzeButton:hover {
       background-color: #4a4a4a;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
       transform: translateY(-1px);
     }
+
+
+    a:link {
+      text-decoration: none;
+      color: white;
+      /* Set color to black */
+    }
+
+    a:visited {
+      text-decoration: none;
+      color: white;
+      /* Set color to black */
+    }
+
+    a:hover {
+      text-decoration: none;
+      color: white;
+      /* Set color to black */
+    }
+
+    a:active {
+      text-decoration: none;
+      color: white;
+      /* Set color to black */
+    }
+
     #analyzeButton:active {
       background-color: #2a2a2a;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
       transform: translateY(1px);
     }
+
+    #buyMeACoffeeButton {
+      width: 100%;
+      padding: 12px 16px;
+      background-color: #3a3a3a;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      margin-top: 16px;
+    }
+
+    #buyMeACoffeeButton:hover {
+      background-color: #4a4a4a;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transform: translateY(-1px);
+    }
+
+    #buyMeACoffeeButton:active {
+      background-color: #2a2a2a;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      transform: translateY(1px);
+    }
+
     .copy-feedback {
       position: absolute;
-      background-color: rgba(255,255,255,0.8);
+      background-color: rgba(255, 255, 255, 0.8);
       color: black;
       padding: 5px;
       border-radius: 4px;
       font-size: 12px;
     }
+
     .error-message {
       text-align: center;
       color: #ff6b6b;
       padding: 20px;
     }
+
     .error-message p {
       margin: 0;
       font-size: 14px;
       line-height: 1.4;
     }
+
     .error-hint {
       color: #a0a0a0;
       font-size: 12px;
       margin-top: 10px !important;
     }
+
     .button-container {
       position: relative;
       overflow: hidden;
       width: 100%;
     }
+
     .ripple-container {
       position: absolute;
       top: 0;
@@ -146,6 +221,7 @@
       overflow: hidden;
       pointer-events: none;
     }
+
     .ripple {
       position: absolute;
       border-radius: 50%;
@@ -153,12 +229,14 @@
       transform: scale(0);
       animation: ripple-animation 0.6s linear;
     }
+
     @keyframes ripple-animation {
       to {
         transform: scale(4);
         opacity: 0;
       }
     }
+
     .bubble-container {
       position: absolute;
       top: 0;
@@ -168,10 +246,12 @@
       pointer-events: none;
       z-index: 0;
     }
+
     .content {
       position: relative;
       z-index: 1;
     }
+
     .bubble {
       position: absolute;
       border-radius: 50%;
@@ -179,14 +259,17 @@
       opacity: 0;
       animation: rise 4s ease-in infinite;
     }
+
     @keyframes rise {
       0% {
         transform: translateY(100%) scale(0);
         opacity: 0;
       }
+
       50% {
         opacity: 0.5;
       }
+
       100% {
         transform: translateY(-100%) scale(1);
         opacity: 0;
@@ -194,16 +277,26 @@
     }
   </style>
 </head>
+
 <body>
   <div class="bubble-container"></div>
   <div class="content">
     <h1>Chroma Palette 🎨</h1>
     <p class="instruction-text">Click on any color to copy its HEX code.</p>
     <div id="palette">
-      <p class="initial-text">Click the <b>Extract Palette</b> button below to extract colors from the current page's visible area.</p>
+      <p class="initial-text">Click the <b>Extract Palette</b> button below to extract colors from the current page's
+        visible area.</p>
     </div>
     <button id="analyzeButton">Extract Palette</button>
+    <button id="buyMeACoffeeButton">
+      <a href="https://www.buymeacoffee.com/bymayanksingh" target="_blank">
+        <img src="bmc-logo.svg" alt="Buy Me A Coffee"
+          style="width: 18px; height: 18px; vertical-align: middle; margin-right: 8px;">
+        Buy me a Coffee
+      </a>
+    </button>
   </div>
   <script src="popup.js"></script>
 </body>
+
 </html>
