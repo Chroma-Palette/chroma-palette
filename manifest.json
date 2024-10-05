@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Chroma Palette 🎨",
-    "version": "1.0",
+    "version": "1.1",
     "description": "Extract the dominant color palette from the visible area of any webpage.",
     "author": "Mayank Singh",
     "homepage_url": "https://linktr.ee/bymayanksingh",
