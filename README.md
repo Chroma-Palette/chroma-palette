@@ -54,44 +54,44 @@ For support or queries, please open an issue or contact us at [mayank.singh08199
 
 To make Chroma Palette 🎨 the #1 color palette extension worldwide:
 
-1. **Color Harmony Suggestions**: Provide complementary, analogous, and other color harmony suggestions based on extracted colors.
+- [] Color Harmony Suggestions**: Provide complementary, analogous, and other color harmony suggestions based on extracted colors.
 
-2. **Color Naming**: Implement intelligent color naming for extracted colors (e.g., "Cerulean Blue" instead of just "#007BA7").
+- [x] **Color Naming**: Implement intelligent color naming for extracted colors (e.g., "Cerulean Blue" instead of just "#007BA7").
 
-3. **Palette Export**: Allow users to export palettes in various formats (Adobe ASE, GIMP GPL, CSV, JSON).
+- [] **Palette Export**: Allow users to export palettes in various formats (Adobe ASE, GIMP GPL, CSV, JSON).
 
-4. **Historical Palette Storage**: Save extracted palettes with associated URLs for future reference.
+- [] **Historical Palette Storage**: Save extracted palettes with associated URLs for future reference.
 
-5. **Color Accessibility Checker**: Analyze color contrasts for accessibility compliance (WCAG).
+- [] **Color Accessibility Checker**: Analyze color contrasts for accessibility compliance (WCAG).
 
-6. **Integration with Design Tools**: Direct export to Adobe Creative Cloud, Sketch, or Figma.
+- [] **Integration with Design Tools**: Direct export to Adobe Creative Cloud, Sketch, or Figma.
 
-7. **Advanced Color Analysis**: Provide color distribution percentages and dominant vs. accent color identification.
+- [] **Advanced Color Analysis**: Provide color distribution percentages and dominant vs. accent color identification.
 
-8. **Custom Color Extraction**: Allow users to select specific areas of a webpage for color extraction.
+- [] **Custom Color Extraction**: Allow users to select specific areas of a webpage for color extraction.
 
-9. **Color Trends**: Analyze and display color trends across popular websites or specific industries.
+- [] **Color Trends**: Analyze and display color trends across popular websites or specific industries.
 
-10. **API Access**: Provide an API for developers to integrate Chroma Palette 🎨's functionality into their own tools.
+- [] **API Access**: Provide an API for developers to integrate Chroma Palette 🎨's functionality into their own tools.
 
-11. **Multiple Color Models**: Support RGB, HSL, CMYK, and other color models in addition to HEX.
+- [] **Multiple Color Models**: Support RGB, HSL, CMYK, and other color models in addition to HEX.
 
-12. **Color Blindness Simulation**: Show how extracted colors appear to individuals with various types of color blindness.
+- [] **Color Blindness Simulation**: Show how extracted colors appear to individuals with various types of color blindness.
 
-13. **Palette Sharing**: Allow users to share extracted palettes directly to social media or design communities.
+- [] **Palette Sharing**: Allow users to share extracted palettes directly to social media or design communities.
 
-14. **Browser Sync**: Sync saved palettes across devices using Chrome sync.
+- [] **Browser Sync**: Sync saved palettes across devices using Chrome sync.
 
-15. **Customizable Extraction**: Let users adjust the number of colors extracted or set color extraction algorithms.
+- [] **Customizable Extraction**: Let users adjust the number of colors extracted or set color extraction algorithms.
 
-16. **Color Psychology Insights**: Provide information on the psychological effects and common uses of extracted colors.
+- [] **Color Psychology Insights**: Provide information on the psychological effects and common uses of extracted colors.
 
-17. **Localization**: Support multiple languages to cater to a global user base.
+- [] **Localization**: Support multiple languages to cater to a global user base.
 
-18. **Theme Generation**: Generate full website color themes based on extracted palettes.
+- [] **Theme Generation**: Generate full website color themes based on extracted palettes.
 
-19. **Image Color Extraction**: Allow users to upload images for color extraction, not just webpages.
+- [] **Image Color Extraction**: Allow users to upload images for color extraction, not just webpages.
 
-20. **Color Palette Communities**: Create a platform for users to share and rate color palettes extracted from various websites.
+- [] **Color Palette Communities**: Create a platform for users to share and rate color palettes extracted from various websites.
 
 By implementing these features progressively, Chroma Palette 🎨 can evolve into a comprehensive color tool that caters to a wide range of users, from casual enthusiasts to professional designers, solidifying its position as the leading color palette extension worldwide.
