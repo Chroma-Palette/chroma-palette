@@ -3,10 +3,6 @@
  * It manages color extraction, display, and user interactions.
  */
 
-/**
- * Initializes the extension's popup interface.
- * Sets up event listeners for the analyze button.
- */
 document.addEventListener('DOMContentLoaded', () => {
     const analyzeButton = document.getElementById('analyzeButton');
     analyzeButton.addEventListener('click', () => {
@@ -242,4 +238,49 @@ function startBubbleAnimation() {
     for (let i = 0; i < 10; i++) {
         setTimeout(createBubble, i * 300);
     }
+}
+
+/**
+ * Displays the extracted colors in the popup interface.
+ * @param {Array} colors - Array of RGB color arrays.
+ */
+function displayColors(colors) {
+  const palette = document.getElementById('palette');
+  palette.innerHTML = '';
+  palette.classList.add('grid');
+  colors.forEach((color) => {
+    const colorBox = document.createElement('div');
+    colorBox.className = 'color-box';
+    colorBox.style.backgroundColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+
+    const colorInfo = document.createElement('div');
+    colorInfo.className = 'color-info';
+
+    const hexText = document.createElement('div');
+    const hexCode = rgbToHex(color[0], color[1], color[2]);
+    hexText.textContent = hexCode;
+    hexText.className = 'color-hex';
+
+    const colorName = document.createElement('div');
+    colorName.textContent = getColorName(color);
+    colorName.className = 'color-name';
+
+    colorInfo.appendChild(hexText);
+    colorInfo.appendChild(colorName);
+    colorBox.appendChild(colorInfo);
+    colorBox.addEventListener('click', () =>
+      copyToClipboard(hexCode, colorBox, colors)
+    );
+    palette.appendChild(colorBox);
+  });
+}
+
+/**
+ * Gets the name of the color closest to the given RGB values.
+ * @param {Array} rgb - Array of RGB values [r, g, b].
+ * @return {string} The name of the closest color.
+ */
+function getColorName(rgb) {
+  const color = ntc.name(rgbToHex(rgb[0], rgb[1], rgb[2]));
+  return color[1]; // Returns the color name
 }

@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <!-- 
+  <head>
+      <!-- 
   This is the main popup interface for the Chroma Palette 🎨  extension.
   It includes the structure, styling, and links to necessary scripts.
   -->
@@ -13,8 +12,9 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@700&display=swap"
     rel="stylesheet">
   <script src="color-thief.min.js"></script>
-  <style>
-    /* 
+    <script src="ntc.js"></script>
+    <style>
+      /* 
     CSS styles for the popup interface.
     Includes styling for the overall layout, color boxes, buttons, and error messages.
     */
@@ -275,11 +275,15 @@
         opacity: 0;
       }
     }
-  </style>
-</head>
-
-<body>
-  <div class="bubble-container"></div>
+      .color-name {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.7);
+        margin-top: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bubble-container"></div>
   <div class="content">
     <h1>Chroma Palette 🎨</h1>
     <p class="instruction-text">Click on any color to copy its HEX code.</p>
@@ -294,7 +298,7 @@
       </a>
     </button>
   </div>
-  <script src="popup.js"></script>
-</body>
-
+    <script src="ntc.js"></script>
+    <script src="popup.js"></script>
+  </body>
 </html>

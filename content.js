@@ -3,21 +3,21 @@
  * It handles color extraction from the visible area of the page.
  */
 
-console.log("Content script loaded");
+console.log('Content script loaded');
 
 // Notify the extension that the content script has been loaded successfully
-chrome.runtime.sendMessage({ action: "contentScriptLoaded" });
+chrome.runtime.sendMessage({ action: 'contentScriptLoaded' });
 
 /**
  * Listens for messages from the extension's background script or popup.
  */
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    console.log("Message received in content script:", request);
-    if (request.action === "getColors") {
-        getPageColors();
-        sendResponse({ status: "Colors request received" });
-    }
-    return true; // Indicates that the response will be sent asynchronously
+  console.log('Message received in content script:', request);
+  if (request.action === 'getColors') {
+    getPageColors();
+    sendResponse({ status: 'Colors request received' });
+  }
+  return true; // Indicates that the response will be sent asynchronously
 });
 
 /**
@@ -25,18 +25,23 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
  * Uses html2canvas to capture the page and ColorThief for color extraction.
  */
 function getPageColors() {
-    console.log("Getting page colors");
+  console.log('Getting page colors');
 
-    // Capture the visible part of the page
-    html2canvas(document.body).then(canvas => {
-        const colorThief = new ColorThief();
-        const colorPalette = colorThief.getPalette(canvas, 5);
-        console.log("Color palette:", colorPalette);
-        // Send the extracted color palette back to the extension
-        chrome.runtime.sendMessage({ action: "gotColors", colors: colorPalette });
-    }).catch(error => {
-        console.error("Error capturing page:", error);
-        // Notify the extension of the error
-        chrome.runtime.sendMessage({ action: "error", message: "Failed to capture page" });
+  // Capture the visible part of the page
+  html2canvas(document.body)
+    .then((canvas) => {
+      const colorThief = new ColorThief();
+      const colorPalette = colorThief.getPalette(canvas, 5);
+      console.log('Color palette:', colorPalette);
+      // Send the extracted color palette back to the extension
+      chrome.runtime.sendMessage({ action: 'gotColors', colors: colorPalette });
+    })
+    .catch((error) => {
+      console.error('Error capturing page:', error);
+      // Notify the extension of the error
+      chrome.runtime.sendMessage({
+        action: 'error',
+        message: 'Failed to capture page',
+      });
     });
 }
