@@ -3,17 +3,21 @@
  * It manages color extraction, display, and user interactions.
  */
 
+
 document.addEventListener('DOMContentLoaded', () => {
-    const analyzeButton = document.getElementById('analyzeButton');
-    analyzeButton.addEventListener('click', () => {
-      startBubbleAnimation();
-      getPageColors();
-    });
-  
-    // Add event listener for the new export button
-    const exportButton = document.getElementById('exportButton');
-    exportButton.addEventListener('click', showExportOptions);
+  const analyzeButton = document.getElementById('analyzeButton');
+  analyzeButton.addEventListener('click', () => {
+    startBubbleAnimation();
+    getPageColors();
   });
+
+  // Add event listener for the new export button
+  const exportButton = document.getElementById('exportButton');
+  exportButton.addEventListener('click', showExportOptions);
+
+  const eyedropperButton = document.getElementById('eyedropperButton');
+  eyedropperButton.addEventListener('click', activateEyedropper);
+});
   
   /**
    * Captures the visible tab and extracts colors from it.
@@ -39,33 +43,61 @@ document.addEventListener('DOMContentLoaded', () => {
           });
       });
   }
+
+
+// Existing functions...
+
+function activateEyedropper() {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, { action: "activateEyedropper" });
+    });
+    window.close(); // Close the popup to allow interaction with the page
+  }
+  
+  // Add this function to handle messages from the content script
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === "colorPicked") {
+      const color = request.color;
+      displayColors([[color.r, color.g, color.b]]);
+    }
+  });
   
   /**
    * Displays the extracted colors in the popup interface.
    * @param {Array} colors - Array of RGB color arrays.
    */
   function displayColors(colors) {
-      const palette = document.getElementById('palette');
-      palette.innerHTML = '';
-      palette.classList.add('grid');
-      colors.forEach(color => {
-          const colorBox = document.createElement('div');
-          colorBox.className = 'color-box';
-          colorBox.style.backgroundColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+    const palette = document.getElementById('palette');
+    palette.innerHTML = '';
+    palette.classList.add('grid');
+    colors.forEach((color) => {
+      const colorBox = document.createElement('div');
+      colorBox.className = 'color-box';
+      colorBox.style.backgroundColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
   
-          const colorInfo = document.createElement('div');
-          colorInfo.className = 'color-info';
+      const colorInfo = document.createElement('div');
+      colorInfo.className = 'color-info';
   
-          const hexText = document.createElement('div');
-          const hexCode = rgbToHex(color[0], color[1], color[2]);
-          hexText.textContent = hexCode;
-          hexText.className = 'color-hex';
+      const hexText = document.createElement('div');
+      const hexCode = rgbToHex(color[0], color[1], color[2]);
+      hexText.textContent = hexCode;
+      hexText.className = 'color-hex';
   
-          colorInfo.appendChild(hexText);
-          colorBox.appendChild(colorInfo);
-          colorBox.addEventListener('click', () => copyToClipboard(hexCode, colorBox, colors));
-          palette.appendChild(colorBox);
-      });
+      const colorName = document.createElement('div');
+      colorName.textContent = getColorName(color);
+      colorName.className = 'color-name';
+  
+      colorInfo.appendChild(hexText);
+      colorInfo.appendChild(colorName);
+      colorBox.appendChild(colorInfo);
+      colorBox.addEventListener('click', () =>
+        copyToClipboard(hexCode, colorBox, colors)
+      );
+      palette.appendChild(colorBox);
+    });
+  
+    // Show export button after colors are displayed
+    document.getElementById('exportButton').style.display = 'block';
   }
   
   /**
@@ -293,14 +325,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const color = ntc.name(rgbToHex(rgb[0], rgb[1], rgb[2]));
     return color[1]; // Returns the color name
   }
-  
-  
+
+  function closeExportOptions() {
+    const exportOptions = document.getElementById('exportOptions');
+    if (exportOptions) {
+      exportOptions.remove();
+    }
+  }  
   
   function showExportOptions() {
     const exportOptions = document.createElement('div');
     exportOptions.id = 'exportOptions';
     exportOptions.innerHTML = `
-      <h3>Export Format</h3>
+      <div class="export-header">
+        <h3>Export</h3>
+        <button id="closeExportOptions" class="close-button">&times;</button>
+      </div>
       <button id="exportCSV">CSV</button>
       <button id="exportJSON">JSON</button>
       <button id="exportPNG">PNG</button>
@@ -308,10 +348,23 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     document.body.appendChild(exportOptions);
   
-    document.getElementById('exportCSV').addEventListener('click', () => exportPalette('csv'));
-    document.getElementById('exportJSON').addEventListener('click', () => exportPalette('json'));
-    document.getElementById('exportPNG').addEventListener('click', () => exportPalette('png'));
-    document.getElementById('exportJPG').addEventListener('click', () => exportPalette('jpg'));
+    document
+      .getElementById('exportCSV')
+      .addEventListener('click', () => exportPalette('csv'));
+    document
+      .getElementById('exportJSON')
+      .addEventListener('click', () => exportPalette('json'));
+    document
+      .getElementById('exportPNG')
+      .addEventListener('click', () => exportPalette('png'));
+    document
+      .getElementById('exportJPG')
+      .addEventListener('click', () => exportPalette('jpg'));
+  
+    // Add event listener for the close button
+    document
+      .getElementById('closeExportOptions')
+      .addEventListener('click', closeExportOptions);
   }
   
   function exportPalette(format) {

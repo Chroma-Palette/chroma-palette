@@ -145,10 +145,25 @@
         z-index: 1000;
       }
 
-      #exportOptions h3 {
-        margin-top: 0;
+      .export-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         margin-bottom: 15px;
-        text-align: center;
+      }
+
+      .export-header h3 {
+        margin: 0;
+      }
+
+      .close-button {
+        background: none;
+        border: none;
+        color: #ffffff;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
       }
 
       #exportOptions button {
@@ -331,6 +346,35 @@
         color: rgba(255, 255, 255, 0.7);
         margin-top: 4px;
       }
+
+      #eyedropperButton {
+        width: 100%;
+        padding: 12px 16px;
+        background-color: #3a3a3a;
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        margin-top: 16px;
+      }
+
+      #eyedropperButton:hover {
+        background-color: #4a4a4a;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        transform: translateY(-1px);
+      }
+
+      #eyedropperButton:active {
+        background-color: #2a2a2a;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        transform: translateY(1px);
+      }
     </style>
   </head>
   <body>
@@ -341,10 +385,11 @@
       <div id="palette">
         <p class="initial-text">
           Click the <b>Extract Palette</b> button below to extract colors from
-          the current page's visible area.
+          the current page's visible area or use the <b>Eyedropper</b> to select custom colors.
         </p>
       </div>
       <button id="analyzeButton">Extract Palette 🎨</button>
+      <button id="eyedropperButton">Eyedropper 👁️</button>
       <button id="exportButton">Export Palette 📤</button>
       <button id="buyMeACoffeeButton">
         <a href="https://www.buymeacoffee.com/bymayanksingh" target="_blank">
