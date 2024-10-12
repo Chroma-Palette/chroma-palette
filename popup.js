@@ -17,7 +17,65 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const eyedropperButton = document.getElementById('eyedropperButton');
   eyedropperButton.addEventListener('click', activateEyedropper);
+
+  const imageUpload = document.getElementById('imageUpload');
+  imageUpload.addEventListener('change', handleImageUpload);
+
+  const removeImageBtn = document.getElementById('removeImageBtn');
+  removeImageBtn.addEventListener('click', removeUploadedImage);
 });
+
+
+function handleImageUpload(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const img = new Image();
+      img.onload = function () {
+        const colorThief = new ColorThief();
+        const colors = colorThief.getPalette(img, 6);
+        displayColors(colors);
+
+        // Show image preview
+        const imagePreview = document.getElementById('imagePreview');
+        const imagePreviewContainer = document.querySelector('.image-preview-container');
+        imagePreview.src = e.target.result;
+        imagePreviewContainer.style.display = 'block';
+        document.getElementById('removeImageBtn').style.display = 'block';
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+
+function removeUploadedImage() {
+  const imagePreview = document.getElementById('imagePreview');
+  const removeImageBtn = document.getElementById('removeImageBtn');
+  const imageUpload = document.getElementById('imageUpload');
+  const palette = document.getElementById('palette');
+  const imagePreviewContainer = document.querySelector('.image-preview-container');
+
+  imagePreview.src = '';
+  imagePreviewContainer.style.display = 'none';
+  removeImageBtn.style.display = 'none';
+  imageUpload.value = ''; // Reset the file input
+
+  // Clear the color palette and restore the initial text
+  palette.innerHTML = `
+    <p class="initial-text">
+      Click the <b>Extract Palette</b> button below to extract colors from
+      the current page's visible area, use the <b>Eyedropper</b> to select
+      custom colors, or <b>Upload an Image</b> to extract colors from it.
+    </p>
+  `;
+  palette.classList.remove('grid');
+
+  // Hide the export button
+  document.getElementById('exportButton').style.display = 'none';
+}
   
   /**
    * Captures the visible tab and extracts colors from it.
@@ -46,19 +104,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // Existing functions...
-
 function activateEyedropper() {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, { action: "activateEyedropper" });
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, { action: "activateEyedropper" }, function(response) {
+      if (chrome.runtime.lastError) {
+        // console.error(chrome.runtime.lastError);
+        alert("Failed to activate eyedropper. Please refresh the page and try again.");
+      } else if (response && response.success) {
+        console.log("Eyedropper activated successfully");
+      }
     });
-    window.close(); // Close the popup to allow interaction with the page
-  }
+  });
+}
   
   // Add this function to handle messages from the content script
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "colorPicked") {
       const color = request.color;
       displayColors([[color.r, color.g, color.b]]);
+      // Optionally, you can add a message to indicate the color was picked
+      const palette = document.getElementById('palette');
+      const message = document.createElement('p');
+      message.textContent = 'Color picked from page';
+      message.style.textAlign = 'center';
+      palette.insertBefore(message, palette.firstChild);
     }
   });
   
@@ -70,6 +139,8 @@ function activateEyedropper() {
     const palette = document.getElementById('palette');
     palette.innerHTML = '';
     palette.classList.add('grid');
+
+
     colors.forEach((color) => {
       const colorBox = document.createElement('div');
       colorBox.className = 'color-box';

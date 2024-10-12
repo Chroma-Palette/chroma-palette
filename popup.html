@@ -43,22 +43,6 @@
         margin-bottom: 20px;
       }
 
-      #palette {
-        background-color: #2a2a2a;
-        border: 1px solid #3a3a3a;
-        border-radius: 12px;
-        overflow: hidden;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      }
-
-      #palette.grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        padding: 16px;
-      }
-
       .color-box {
         aspect-ratio: 1 / 1;
         border-radius: 8px;
@@ -86,6 +70,27 @@
         letter-spacing: 0.5px;
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         color: rgba(255, 255, 255, 0.9);
+      }
+
+      #palette {
+        background-color: #2a2a2a;
+        border: 1px solid #3a3a3a;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #palette.grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        padding: 16px;
       }
 
       .initial-text {
@@ -375,6 +380,88 @@
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         transform: translateY(1px);
       }
+
+      #imageUpload {
+        display: none;
+      }
+
+      #uploadLabel {
+        display: block;
+        width: 100%;
+        padding: 12px 0; /* Changed padding */
+        background-color: #3a3a3a;
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        margin-top: 16px;
+        text-align: center;
+      }
+
+      #uploadLabel:hover {
+        background-color: #4a4a4a;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        transform: translateY(-1px);
+      }
+
+      #uploadLabel:active {
+        background-color: #2a2a2a;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        transform: translateY(1px);
+      }
+
+      .image-preview-container {
+        position: relative;
+        width: 100%;
+        max-width: 300px;
+        margin-top: 16px;
+        display: none;
+      }
+
+      #removeImageBtn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #ffffff;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+        line-height: 24px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      #removeImageBtn:hover {
+        background-color: rgba(0, 0, 0, 0.7);
+      }
+
+      #analyzeButton,
+      #exportButton,
+      #eyedropperButton,
+      #uploadLabel,
+      #buyMeACoffeeButton {
+        width: 100%;
+        padding: 12px 16px;
+        margin-top: 16px;
+        box-sizing: border-box;
+      }
+
+      #imagePreview {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+      }
+
     </style>
   </head>
   <body>
@@ -385,8 +472,15 @@
       <div id="palette">
         <p class="initial-text">
           Click the <b>Extract Palette</b> button below to extract colors from
-          the current page's visible area or use the <b>Eyedropper</b> to select custom colors.
+          the current page's visible area, use the <b>Eyedropper</b> to select
+          custom colors, or <b>Upload an Image</b> to extract colors from it.
         </p>
+      </div>
+      <label for="imageUpload" id="uploadLabel">Upload Image 🖼️</label>
+      <input type="file" id="imageUpload" accept="image/*" />
+      <div class="image-preview-container">
+        <img id="imagePreview" alt="Uploaded image preview" />
+        <button id="removeImageBtn">&times;</button>
       </div>
       <button id="analyzeButton">Extract Palette 🎨</button>
       <button id="eyedropperButton">Eyedropper 👁️</button>
