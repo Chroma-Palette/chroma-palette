@@ -58,7 +58,7 @@ To make Chroma Palette 🎨 the #1 color palette extension worldwide:
 
 - [x] **Color Naming**: Implement intelligent color naming for extracted colors (e.g., "Cerulean Blue" instead of just "#007BA7").
 
-- [] **Palette Export**: Allow users to export palettes in various formats (Adobe ASE, GIMP GPL, CSV, JSON).
+- [x] **Palette Export**: Allow users to export palettes in various formats (CSV, JSON, PNG, JPG).
 
 - [] **Historical Palette Storage**: Save extracted palettes with associated URLs for future reference.
 
@@ -93,5 +93,11 @@ To make Chroma Palette 🎨 the #1 color palette extension worldwide:
 - [] **Image Color Extraction**: Allow users to upload images for color extraction, not just webpages.
 
 - [] **Color Palette Communities**: Create a platform for users to share and rate color palettes extracted from various websites.
+
+- [] **Color Name to Hex / RGB / CYMK**: Reverse the feature.
+
+- [] **Code Snippet Generator**: Imagine Gradients, Flexbox.
+
+
 
 By implementing these features progressively, Chroma Palette 🎨 can evolve into a comprehensive color tool that caters to a wide range of users, from casual enthusiasts to professional designers, solidifying its position as the leading color palette extension worldwide.
