@@ -1,497 +1,506 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- 
+
+<head>
+  <!-- 
   This is the main popup interface for the Chroma Palette 🎨  extension.
   It includes the structure, styling, and links to necessary scripts.
   -->
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chroma Palette 🎨</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@700&display=swap"
-      rel="stylesheet"
-    />
-    <script src="color-thief.min.js"></script>
-    <script src="ntc.js"></script>
-    <style>
-      /* 
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chroma Palette 🎨</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet" />
+  <script src="color-thief.min.js"></script>
+  <script src="ntc.js"></script>
+  <style>
+    /* 
     CSS styles for the popup interface.
     Includes styling for the overall layout, color boxes, buttons, and error messages.
     */
-      body {
-        position: relative;
-        overflow: hidden;
-        width: 300px;
-        font-family: 'Inter', sans-serif;
-        margin: 0;
-        padding: 20px;
-        background-color: #1a1a1a;
-        color: #ffffff;
-      }
+    body {
+      position: relative;
+      overflow: hidden;
+      width: 300px;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #1a1a1a;
+      color: #ffffff;
+    }
 
-      h1 {
-        font-family: 'Playfair Display', serif;
-        text-align: center;
-        margin-bottom: 20px;
-      }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      text-align: center;
+      margin-bottom: 20px;
+    }
 
-      .instruction-text {
-        text-align: center;
-        color: #a0a0a0;
-        font-size: 12px;
-        margin-bottom: 20px;
-      }
+    .instruction-text {
+      text-align: center;
+      color: #a0a0a0;
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
 
-      .color-box {
-        aspect-ratio: 1 / 1;
-        border-radius: 8px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        position: relative;
-        transition: all 0.3s ease;
-        border: 2px solid transparent;
-      }
+    .color-box {
+      aspect-ratio: 1 / 1;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
 
-      .color-box:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-      }
+    .color-box:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
 
-      .color-info {
-        text-align: center;
-      }
+    .color-info {
+      text-align: center;
+    }
 
-      .color-hex {
-        font-size: 14px;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-        color: rgba(255, 255, 255, 0.9);
-      }
+    .color-hex {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      color: rgba(255, 255, 255, 0.9);
+    }
 
-      #palette {
-        background-color: #2a2a2a;
-        border: 1px solid #3a3a3a;
-        border-radius: 12px;
-        overflow: hidden;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        min-height: 200px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-      }
+    #palette {
+      background-color: #2a2a2a;
+      border: 1px solid #3a3a3a;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
 
-      #palette.grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        padding: 16px;
-      }
+    #palette.grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 16px;
+    }
 
-      .initial-text {
-        text-align: center;
-        color: #a0a0a0;
-        font-size: 16px;
-        line-height: 1.5;
-        padding: 32px 16px;
-        margin: 0;
-      }
+    .initial-text {
+      text-align: center;
+      color: #a0a0a0;
+      font-size: 16px;
+      line-height: 1.5;
+      padding: 32px 16px;
+      margin: 0;
+    }
 
-      #analyzeButton,
-      #exportButton {
-        width: 100%;
-        padding: 12px 16px;
-        background-color: #3a3a3a;
-        color: #ffffff;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        margin-top: 16px;
-      }
+    #analyzeButton,
+    #exportButton {
+      width: 100%;
+      padding: 12px 16px;
+      background-color: #3a3a3a;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      margin-top: 16px;
+    }
 
-      #analyzeButton:hover,
-      #exportButton:hover {
-        background-color: #4a4a4a;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        transform: translateY(-1px);
-      }
+    #analyzeButton:hover,
+    #exportButton:hover {
+      background-color: #4a4a4a;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transform: translateY(-1px);
+    }
 
-      #analyzeButton:active,
-      #exportButton:active {
-        background-color: #2a2a2a;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        transform: translateY(1px);
-      }
+    #analyzeButton:active,
+    #exportButton:active {
+      background-color: #2a2a2a;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      transform: translateY(1px);
+    }
 
-      #exportButton {
-        display: none;
-      }
+    #exportButton {
+      display: none;
+    }
 
-      #exportOptions {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: #2a2a2a;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
-      }
+    #exportOptions {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #2a2a2a;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
 
-      .export-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-      }
+    .export-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
 
-      .export-header h3 {
-        margin: 0;
-      }
+    .export-header h3 {
+      margin: 0;
+    }
 
-      .close-button {
-        background: none;
-        border: none;
-        color: #ffffff;
-        font-size: 20px;
-        cursor: pointer;
-        padding: 0;
-        line-height: 1;
-      }
+    .close-button {
+      background: none;
+      border: none;
+      color: #ffffff;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+    }
 
-      #exportOptions button {
-        display: block;
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        background-color: #3a3a3a;
-        color: #ffffff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background-color 0.3s ease;
-      }
+    #exportOptions button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #3a3a3a;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+    }
 
-      #exportOptions button:hover {
-        background-color: #4a4a4a;
-      }
+    #exportOptions button:hover {
+      background-color: #4a4a4a;
+    }
 
-      #exportOptions button:last-child {
-        margin-bottom: 0;
-      }
+    #exportOptions button:last-child {
+      margin-bottom: 0;
+    }
 
-      a:link {
-        text-decoration: none;
-        color: white;
-        /* Set color to black */
-      }
+    a:link {
+      text-decoration: none;
+      color: white;
+      /* Set color to black */
+    }
 
-      a:visited {
-        text-decoration: none;
-        color: white;
-        /* Set color to black */
-      }
+    a:visited {
+      text-decoration: none;
+      color: white;
+      /* Set color to black */
+    }
 
-      a:hover {
-        text-decoration: none;
-        color: white;
-        /* Set color to black */
-      }
+    a:hover {
+      text-decoration: none;
+      color: white;
+      /* Set color to black */
+    }
 
-      a:active {
-        text-decoration: none;
-        color: white;
-        /* Set color to black */
-      }
+    a:active {
+      text-decoration: none;
+      color: white;
+      /* Set color to black */
+    }
 
-      #buyMeACoffeeButton {
-        width: 100%;
-        padding: 12px 16px;
-        background-color: #3a3a3a;
-        color: #ffffff;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        margin-top: 16px;
-      }
+    #buyMeACoffeeButton {
+      width: 100%;
+      padding: 12px 16px;
+      background-color: #3a3a3a;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      margin-top: 16px;
+    }
 
-      #buyMeACoffeeButton:hover {
-        background-color: #4a4a4a;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        transform: translateY(-1px);
-      }
+    #buyMeACoffeeButton:hover {
+      background-color: #4a4a4a;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transform: translateY(-1px);
+    }
 
-      #buyMeACoffeeButton:active {
-        background-color: #2a2a2a;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        transform: translateY(1px);
-      }
+    #buyMeACoffeeButton:active {
+      background-color: #2a2a2a;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      transform: translateY(1px);
+    }
 
-      .copy-feedback {
-        position: absolute;
-        background-color: rgba(255, 255, 255, 0.8);
-        color: black;
-        padding: 5px;
-        border-radius: 4px;
-        font-size: 12px;
-      }
+    .copy-feedback {
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.8);
+      color: black;
+      padding: 5px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
 
-      .error-message {
-        text-align: center;
-        color: #ff6b6b;
-        padding: 20px;
-      }
+    .error-message {
+      text-align: center;
+      color: #ff6b6b;
+      padding: 20px;
+    }
 
-      .error-message p {
-        margin: 0;
-        font-size: 14px;
-        line-height: 1.4;
-      }
+    .error-message p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.4;
+    }
 
-      .error-hint {
-        color: #a0a0a0;
-        font-size: 12px;
-        margin-top: 10px !important;
-      }
+    .error-hint {
+      color: #a0a0a0;
+      font-size: 12px;
+      margin-top: 10px !important;
+    }
 
-      .button-container {
-        position: relative;
-        overflow: hidden;
-        width: 100%;
-      }
+    .button-container {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+    }
 
-      .ripple-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        pointer-events: none;
-      }
+    .ripple-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+    }
 
-      .ripple {
-        position: absolute;
-        border-radius: 50%;
-        background-color: rgba(255, 255, 255, 0.3);
-        transform: scale(0);
-        animation: ripple-animation 0.6s linear;
-      }
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.3);
+      transform: scale(0);
+      animation: ripple-animation 0.6s linear;
+    }
 
-      @keyframes ripple-animation {
-        to {
-          transform: scale(4);
-          opacity: 0;
-        }
-      }
-
-      .bubble-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 0;
-      }
-
-      .content {
-        position: relative;
-        z-index: 1;
-      }
-
-      .bubble {
-        position: absolute;
-        border-radius: 50%;
-        background: radial-gradient(
-          circle at 30% 30%,
-          rgba(255, 255, 255, 0.3),
-          rgba(255, 255, 255, 0.1)
-        );
+    @keyframes ripple-animation {
+      to {
+        transform: scale(4);
         opacity: 0;
-        animation: rise 4s ease-in infinite;
+      }
+    }
+
+    .bubble-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%,
+          rgba(255, 255, 255, 0.3),
+          rgba(255, 255, 255, 0.1));
+      opacity: 0;
+      animation: rise 4s ease-in infinite;
+    }
+
+    @keyframes rise {
+      0% {
+        transform: translateY(100%) scale(0);
+        opacity: 0;
       }
 
-      @keyframes rise {
-        0% {
-          transform: translateY(100%) scale(0);
-          opacity: 0;
-        }
-
-        50% {
-          opacity: 0.5;
-        }
-
-        100% {
-          transform: translateY(-100%) scale(1);
-          opacity: 0;
-        }
-      }
-      .color-name {
-        font-size: 12px;
-        color: rgba(255, 255, 255, 0.7);
-        margin-top: 4px;
+      50% {
+        opacity: 0.5;
       }
 
-      #eyedropperButton {
-        width: 100%;
-        padding: 12px 16px;
-        background-color: #3a3a3a;
-        color: #ffffff;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        margin-top: 16px;
+      100% {
+        transform: translateY(-100%) scale(1);
+        opacity: 0;
       }
+    }
 
-      #eyedropperButton:hover {
-        background-color: #4a4a4a;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        transform: translateY(-1px);
-      }
+    .color-name {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.7);
+      margin-top: 4px;
+    }
 
-      #eyedropperButton:active {
-        background-color: #2a2a2a;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        transform: translateY(1px);
-      }
+    #eyedropperButton {
+      width: 100%;
+      padding: 12px 16px;
+      background-color: #3a3a3a;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      margin-top: 16px;
+    }
 
-      #imageUpload {
-        display: none;
-      }
+    #eyedropperButton:hover {
+      background-color: #4a4a4a;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transform: translateY(-1px);
+    }
 
-      #uploadLabel {
-        display: block;
-        width: 100%;
-        padding: 12px 0; /* Changed padding */
-        background-color: #3a3a3a;
-        color: #ffffff;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        margin-top: 16px;
-        text-align: center;
-      }
+    #eyedropperButton:active {
+      background-color: #2a2a2a;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      transform: translateY(1px);
+    }
 
-      #uploadLabel:hover {
-        background-color: #4a4a4a;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        transform: translateY(-1px);
-      }
+    #imageUpload {
+      display: none;
+    }
 
-      #uploadLabel:active {
-        background-color: #2a2a2a;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        transform: translateY(1px);
-      }
+    #uploadLabel {
+      display: block;
+      width: 100%;
+      padding: 12px 0;
+      /* Changed padding */
+      background-color: #3a3a3a;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      margin-top: 16px;
+      text-align: center;
+    }
 
-      .image-preview-container {
-        position: relative;
-        width: 100%;
-        max-width: 300px;
-        margin-top: 16px;
-        display: none;
-      }
+    #uploadLabel:hover {
+      background-color: #4a4a4a;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transform: translateY(-1px);
+    }
 
-      #removeImageBtn {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        background-color: rgba(0, 0, 0, 0.5);
-        color: #ffffff;
-        border: none;
-        border-radius: 50%;
-        width: 24px;
-        height: 24px;
-        font-size: 14px;
-        line-height: 24px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
+    #uploadLabel:active {
+      background-color: #2a2a2a;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      transform: translateY(1px);
+    }
 
-      #removeImageBtn:hover {
-        background-color: rgba(0, 0, 0, 0.7);
-      }
+    .image-preview-container {
+      position: relative;
+      width: 100%;
+      max-width: 300px;
+      margin-top: 16px;
+      display: none;
+    }
 
-      #analyzeButton,
-      #exportButton,
-      #eyedropperButton,
-      #uploadLabel,
-      #buyMeACoffeeButton {
-        width: 100%;
-        padding: 12px 16px;
-        margin-top: 16px;
-        box-sizing: border-box;
-      }
+    #removeImageBtn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: #ffffff;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      font-size: 14px;
+      line-height: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
 
-      #imagePreview {
-        width: 100%;
-        height: auto;
-        border-radius: 8px;
-      }
+    #removeImageBtn:hover {
+      background-color: rgba(0, 0, 0, 0.7);
+    }
 
-    </style>
-  </head>
-  <body>
-    <div class="bubble-container"></div>
-    <div class="content">
-      <h1>Chroma Palette 🎨</h1>
-      <p class="instruction-text">Click on any color to copy its HEX code.</p>
-      <div id="palette">
-        <p class="initial-text">
-          Click the <b>Extract Palette</b> button below to extract colors from
-          the current page's visible area, use the <b>Eyedropper</b> to select
-          custom colors, or <b>Upload an Image</b> to extract colors from it.
-        </p>
-      </div>
-      <label for="imageUpload" id="uploadLabel">Upload Image 🖼️</label>
-      <input type="file" id="imageUpload" accept="image/*" />
-      <div class="image-preview-container">
-        <img id="imagePreview" alt="Uploaded image preview" />
-        <button id="removeImageBtn">&times;</button>
-      </div>
-      <button id="analyzeButton">Extract Palette 🎨</button>
-      <button id="eyedropperButton">Eyedropper 👁️</button>
-      <button id="exportButton">Export Palette 📤</button>
-      <button id="buyMeACoffeeButton">
-        <a href="https://www.buymeacoffee.com/bymayanksingh" target="_blank">
-          Buy me a Coffee ☕
-        </a>
-      </button>
+    #analyzeButton,
+    #exportButton,
+    #eyedropperButton,
+    #uploadLabel,
+    #buyMeACoffeeButton {
+      width: 100%;
+      padding: 12px 16px;
+      margin-top: 16px;
+      box-sizing: border-box;
+    }
+
+    #imagePreview {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .color-rgb,
+    .color-hsl,
+    .color-cmyk {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.7);
+      margin-top: 2px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bubble-container"></div>
+  <div class="content">
+    <h1>Chroma Palette 🎨</h1>
+    <p class="instruction-text">Click on any color to copy its HEX code.</p>
+    <div id="palette">
+      <p class="initial-text">
+        Click the <b>Extract Palette</b> button below to extract colors from
+        the current page's visible area, use the <b>Eyedropper</b> to select
+        custom colors, or <b>Upload an Image</b> to extract colors from it.
+      </p>
     </div>
-    <script src="ntc.js"></script>
-    <script src="popup.js"></script>
-  </body>
+    <label for="imageUpload" id="uploadLabel">Upload Image 🖼️</label>
+    <input type="file" id="imageUpload" accept="image/*" />
+    <div class="image-preview-container">
+      <img id="imagePreview" alt="Uploaded image preview" />
+      <button id="removeImageBtn">&times;</button>
+    </div>
+    <button id="analyzeButton">Extract Palette 🎨</button>
+    <button id="eyedropperButton">Eyedropper 👁️</button>
+    <button id="exportButton">Export Palette 📤</button>
+    <button id="buyMeACoffeeButton">
+      <a href="https://www.buymeacoffee.com/bymayanksingh" target="_blank">
+        Buy me a Coffee ☕
+      </a>
+    </button>
+  </div>
+  <script src="ntc.js"></script>
+  <script src="popup.js"></script>
+</body>
+
 </html>
