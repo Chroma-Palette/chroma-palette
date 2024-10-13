@@ -5,10 +5,7 @@
   "description": "Extract the dominant color palette from the visible area of any webpage.",
   "author": "Mayank Singh",
   "homepage_url": "https://linktr.ee/bymayanksingh",
-  "permissions": [
-    "activeTab",
-    "storage"
-  ],
+  "permissions": ["activeTab", "storage"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {

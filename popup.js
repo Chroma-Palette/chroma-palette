@@ -3,34 +3,6 @@
  * It manages color extraction, display, and user interactions.
  */
 
-
-document.addEventListener('DOMContentLoaded', () => {
-  const analyzeButton = document.getElementById('analyzeButton');
-  analyzeButton.addEventListener('click', () => {
-    startBubbleAnimation();
-    getPageColors();
-  });
-
-  // Add event listener for the new export button
-  const exportButton = document.getElementById('exportButton');
-  exportButton.addEventListener('click', showExportOptions);
-
-  const eyedropperButton = document.getElementById('eyedropperButton');
-  eyedropperButton.addEventListener('click', activateEyedropper);
-
-  const imageUpload = document.getElementById('imageUpload');
-  imageUpload.addEventListener('change', handleImageUpload);
-
-  const removeImageBtn = document.getElementById('removeImageBtn');
-  removeImageBtn.addEventListener('click', removeUploadedImage);
-
-  loadPalettes();
-
-  const historyButton = document.getElementById('historyButton');
-  historyButton.addEventListener('click', showHistoryView);
-});
-
-
 function handleImageUpload(event) {
   const file = event.target.files[0];
   if (file) {
@@ -310,31 +282,7 @@ function startBubbleAnimation() {
     setTimeout(createBubble, i * 300);
   }
 }
-
 let extractedPalettes = [];
-
-function savePalette(colors) {
-  const newPalette = {
-    id: Date.now(),
-    colors: colors,
-    date: new Date().toLocaleString(),
-  };
-
-  // Check if the palette already exists
-  const paletteExists = extractedPalettes.some(palette =>
-    palette.colors.length === newPalette.colors.length &&
-    palette.colors.every((color, index) =>
-      color[0] === newPalette.colors[index][0] &&
-      color[1] === newPalette.colors[index][1] &&
-      color[2] === newPalette.colors[index][2]
-    )
-  );
-
-  if (!paletteExists) {
-    extractedPalettes.unshift(newPalette); // Add to the beginning of the array
-    chrome.storage.local.set({ palettes: extractedPalettes });
-  }
-}
 
 function loadPalettes() {
   chrome.storage.local.get('palettes', (result) => {
@@ -344,6 +292,135 @@ function loadPalettes() {
   });
 }
 
+function savePalettes(colors) {
+  const newPalette = {
+    id: Date.now(),
+    colors: colors,
+    date: new Date().toLocaleString()
+  };
+  extractedPalettes.push(newPalette);
+  chrome.storage.local.set({ palettes: extractedPalettes });
+}
+
+function deletePalette(id) {
+  extractedPalettes = extractedPalettes.filter(palette => palette.id !== id);
+  chrome.storage.local.set({ palettes: extractedPalettes });
+  showHistoryView(); // Refresh the history view
+}
+
+function showHistoryView() {
+  const content = document.querySelector('.content');
+  content.innerHTML = `
+    <h1>Color History</h1>
+    <div id="historyList"></div>
+    <button id="backButton">Back to Palette</button>
+  `;
+
+  const historyList = document.getElementById('historyList');
+  extractedPalettes.forEach(palette => {
+    const paletteElement = document.createElement('div');
+    paletteElement.className = 'history-palette';
+    paletteElement.innerHTML = `
+      <div class="history-colors">
+        ${palette.colors.map(color => `
+          <div class="history-color" style="background-color: rgb(${color.join(',')})"></div>
+        `).join('')}
+      </div>
+      <div class="history-actions">
+        <div class="history-date">${palette.date}</div>
+        <button class="load-palette" data-id="${palette.id}">Load</button>
+        <button class="delete-palette" data-id="${palette.id}">Delete</button>
+      </div>
+    `;
+    paletteElement.querySelector('.load-palette').addEventListener('click', (e) => {
+      e.stopPropagation();
+      displayColors(palette.colors);
+      showMainView();
+    });
+    paletteElement.querySelector('.delete-palette').addEventListener('click', (e) => {
+      e.stopPropagation();
+      deletePalette(palette.id);
+    });
+    historyList.appendChild(paletteElement);
+  });
+
+  document.getElementById('backButton').addEventListener('click', showMainView);
+}
+
+function showMainView() {
+  const content = document.querySelector('.content');
+  content.innerHTML = `
+    <h1>Chroma Palette 🎨</h1>
+    <p class="instruction-text">Click on any color to copy its HEX code.</p>
+    <div id="palette">
+      <p class="initial-text">
+        Click the <b>Extract Palette</b> button below to extract colors from
+        the current page's visible area, use the <b>Eyedropper</b> to select
+        custom colors, or <b>Upload an Image</b> to extract colors from it.
+      </p>
+    </div>
+    <label for="imageUpload" id="uploadLabel">Upload Image 🖼️</label>
+    <input type="file" id="imageUpload" accept="image/*" />
+    <div class="image-preview-container">
+      <img id="imagePreview" alt="Uploaded image preview" />
+      <button id="removeImageBtn">&times;</button>
+    </div>
+    <button id="analyzeButton">Extract Palette 🎨</button>
+    <button id="eyedropperButton">Eyedropper 👁️</button>
+    <button id="exportButton">Export Palette 📤</button>
+    <button id="historyButton">View History 📜</button>
+    <button id="buyMeACoffeeButton">
+      <a href="https://www.buymeacoffee.com/bymayanksingh" target="_blank">
+        Buy me a Coffee ☕
+      </a>
+    </button>
+  `;
+
+  // Reattach event listeners
+  attachEventListeners();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const analyzeButton = document.getElementById('analyzeButton');
+  if (analyzeButton) {
+    analyzeButton.addEventListener('click', () => {
+      startBubbleAnimation();
+      getPageColors();
+    });
+  }
+
+  const exportButton = document.getElementById('exportButton');
+  if (exportButton) {
+    exportButton.addEventListener('click', showExportOptions);
+  }
+
+  const eyedropperButton = document.getElementById('eyedropperButton');
+  if (eyedropperButton) {
+    eyedropperButton.addEventListener('click', activateEyedropper);
+  }
+
+  const imageUpload = document.getElementById('imageUpload');
+  if (imageUpload) {
+    imageUpload.addEventListener('change', handleImageUpload);
+  }
+
+  const removeImageBtn = document.getElementById('removeImageBtn');
+  if (removeImageBtn) {
+    removeImageBtn.addEventListener('click', removeUploadedImage);
+  }
+
+  const historyButton = document.getElementById('historyButton');
+  if (historyButton) {
+    historyButton.addEventListener('click', showHistoryView);
+  }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadPalettes();
+  attachEventListeners();
+});
+
+
 
 /**
  * Displays the extracted colors in the popup interface.
@@ -352,6 +429,11 @@ function loadPalettes() {
 
 function displayColors(colors) {
   const palette = document.getElementById('palette');
+  if (!palette) {
+    console.error('Palette element not found');
+    return;
+  }
+
   palette.innerHTML = '';
   palette.classList.add('grid');
 
@@ -375,14 +457,17 @@ function displayColors(colors) {
     colorInfo.appendChild(hexText);
     colorInfo.appendChild(colorName);
     colorBox.appendChild(colorInfo);
-    colorBox.addEventListener('click', () => copyToClipboard(hexCode, colorBox, colors));
+    colorBox.addEventListener('click', () =>
+      copyToClipboard(hexCode, colorBox, colors)
+    );
     palette.appendChild(colorBox);
   });
 
-  savePalette(colors);
-
-  document.getElementById('exportButton').style.display = 'block';
-  document.getElementById('historyButton').style.display = 'block';
+  // Show export button after colors are displayed
+  const exportButton = document.getElementById('exportButton');
+  if (exportButton) {
+    exportButton.style.display = 'block';
+  }
 }
 
 
@@ -395,7 +480,7 @@ function showHistoryView() {
   `;
 
   const historyList = document.getElementById('historyList');
-  extractedPalettes.reverse().forEach(palette => {
+  extractedPalettes.forEach(palette => {
     const paletteElement = document.createElement('div');
     paletteElement.className = 'history-palette';
     paletteElement.innerHTML = `
@@ -405,13 +490,19 @@ function showHistoryView() {
         `).join('')}
       </div>
       <div class="history-date">${palette.date}</div>
+      <button class="delete-palette" data-id="${palette.id}">Delete</button>
     `;
-    paletteElement.addEventListener('click', () => displayColors(palette.colors));
+    paletteElement.querySelector('.history-colors').addEventListener('click', () => displayColors(palette.colors));
+    paletteElement.querySelector('.delete-palette').addEventListener('click', (e) => {
+      e.stopPropagation();
+      deletePalette(palette.id);
+    });
     historyList.appendChild(paletteElement);
   });
 
   document.getElementById('backButton').addEventListener('click', showMainView);
 }
+
 
 function showMainView() {
   const content = document.querySelector('.content');
@@ -469,10 +560,6 @@ function attachEventListeners() {
   historyButton.addEventListener('click', showHistoryView);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  loadPalettes();
-  attachEventListeners();
-});
 
 function rgbToHsl(r, g, b) {
   r /= 255, g /= 255, b /= 255;
