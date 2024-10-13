@@ -23,6 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const removeImageBtn = document.getElementById('removeImageBtn');
   removeImageBtn.addEventListener('click', removeUploadedImage);
+
+  loadPalettes();
+
+  const historyButton = document.getElementById('historyButton');
+  historyButton.addEventListener('click', showHistoryView);
 });
 
 
@@ -306,6 +311,39 @@ function startBubbleAnimation() {
   }
 }
 
+let extractedPalettes = [];
+
+function savePalette(colors) {
+  const newPalette = {
+    id: Date.now(),
+    colors: colors,
+    date: new Date().toLocaleString(),
+  };
+
+  // Check if the palette already exists
+  const paletteExists = extractedPalettes.some(palette =>
+    palette.colors.length === newPalette.colors.length &&
+    palette.colors.every((color, index) =>
+      color[0] === newPalette.colors[index][0] &&
+      color[1] === newPalette.colors[index][1] &&
+      color[2] === newPalette.colors[index][2]
+    )
+  );
+
+  if (!paletteExists) {
+    extractedPalettes.unshift(newPalette); // Add to the beginning of the array
+    chrome.storage.local.set({ palettes: extractedPalettes });
+  }
+}
+
+function loadPalettes() {
+  chrome.storage.local.get('palettes', (result) => {
+    if (result.palettes) {
+      extractedPalettes = result.palettes;
+    }
+  });
+}
+
 
 /**
  * Displays the extracted colors in the popup interface.
@@ -341,9 +379,100 @@ function displayColors(colors) {
     palette.appendChild(colorBox);
   });
 
-  // Show export button after colors are displayed
+  savePalette(colors);
+
   document.getElementById('exportButton').style.display = 'block';
+  document.getElementById('historyButton').style.display = 'block';
 }
+
+
+function showHistoryView() {
+  const content = document.querySelector('.content');
+  content.innerHTML = `
+    <h1>Color History</h1>
+    <div id="historyList"></div>
+    <button id="backButton">Back to Palette</button>
+  `;
+
+  const historyList = document.getElementById('historyList');
+  extractedPalettes.reverse().forEach(palette => {
+    const paletteElement = document.createElement('div');
+    paletteElement.className = 'history-palette';
+    paletteElement.innerHTML = `
+      <div class="history-colors">
+        ${palette.colors.map(color => `
+          <div class="history-color" style="background-color: rgb(${color.join(',')})"></div>
+        `).join('')}
+      </div>
+      <div class="history-date">${palette.date}</div>
+    `;
+    paletteElement.addEventListener('click', () => displayColors(palette.colors));
+    historyList.appendChild(paletteElement);
+  });
+
+  document.getElementById('backButton').addEventListener('click', showMainView);
+}
+
+function showMainView() {
+  const content = document.querySelector('.content');
+  content.innerHTML = `
+    <h1>Chroma Palette 🎨</h1>
+    <p class="instruction-text">Click on any color to copy its HEX code.</p>
+    <div id="palette">
+      <p class="initial-text">
+        Click the <b>Extract Palette</b> button below to extract colors from
+        the current page's visible area, use the <b>Eyedropper</b> to select
+        custom colors, or <b>Upload an Image</b> to extract colors from it.
+      </p>
+    </div>
+    <label for="imageUpload" id="uploadLabel">Upload Image 🖼️</label>
+    <input type="file" id="imageUpload" accept="image/*" />
+    <div class="image-preview-container">
+      <img id="imagePreview" alt="Uploaded image preview" />
+      <button id="removeImageBtn">&times;</button>
+    </div>
+    <button id="analyzeButton">Extract Palette 🎨</button>
+    <button id="eyedropperButton">Eyedropper 👁️</button>
+    <button id="exportButton">Export Palette 📤</button>
+    <button id="historyButton">View History 📜</button>
+    <button id="buyMeACoffeeButton">
+      <a href="https://www.buymeacoffee.com/bymayanksingh" target="_blank">
+        Buy me a Coffee ☕
+      </a>
+    </button>
+  `;
+
+  // Reattach event listeners
+  attachEventListeners();
+}
+
+function attachEventListeners() {
+  const analyzeButton = document.getElementById('analyzeButton');
+  analyzeButton.addEventListener('click', () => {
+    startBubbleAnimation();
+    getPageColors();
+  });
+
+  const exportButton = document.getElementById('exportButton');
+  exportButton.addEventListener('click', showExportOptions);
+
+  const eyedropperButton = document.getElementById('eyedropperButton');
+  eyedropperButton.addEventListener('click', activateEyedropper);
+
+  const imageUpload = document.getElementById('imageUpload');
+  imageUpload.addEventListener('change', handleImageUpload);
+
+  const removeImageBtn = document.getElementById('removeImageBtn');
+  removeImageBtn.addEventListener('click', removeUploadedImage);
+
+  const historyButton = document.getElementById('historyButton');
+  historyButton.addEventListener('click', showHistoryView);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadPalettes();
+  attachEventListeners();
+});
 
 function rgbToHsl(r, g, b) {
   r /= 255, g /= 255, b /= 255;
