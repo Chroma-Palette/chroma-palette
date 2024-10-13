@@ -79,31 +79,10 @@ function getPageColors() {
   });
 }
 
-
-// Existing functions...
-function activateEyedropper() {
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, { action: "activateEyedropper" }, function (response) {
-      if (chrome.runtime.lastError) {
-        alert("Failed to activate eyedropper. Please refresh the page and try again.");
-      } else if (response && response.success) {
-        console.log("Eyedropper activated successfully");
-      }
-    });
-  });
-}
-
-// Add this function to handle messages from the content script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "colorPicked") {
+  if (request.action === 'colorPicked') {
     const color = request.color;
     displayColors([[color.r, color.g, color.b]]);
-    // Optionally, you can add a message to indicate the color was picked
-    const palette = document.getElementById('palette');
-    const message = document.createElement('p');
-    message.textContent = 'Color picked from page';
-    message.style.textAlign = 'center';
-    palette.insertBefore(message, palette.firstChild);
   }
 });
 
@@ -285,11 +264,10 @@ function startBubbleAnimation() {
 let extractedPalettes = [];
 
 function loadPalettes() {
-  chrome.storage.local.get('palettes', (result) => {
-    if (result.palettes) {
-      extractedPalettes = result.palettes;
-    }
-  });
+  const storedPalettes = localStorage.getItem('palettes');
+  if (storedPalettes) {
+    extractedPalettes = JSON.parse(storedPalettes);
+  }
 }
 
 function savePalettes(colors) {
@@ -299,12 +277,12 @@ function savePalettes(colors) {
     date: new Date().toLocaleString()
   };
   extractedPalettes.push(newPalette);
-  chrome.storage.local.set({ palettes: extractedPalettes });
+  localStorage.setItem('palettes', JSON.stringify(extractedPalettes));
 }
 
 function deletePalette(id) {
   extractedPalettes = extractedPalettes.filter(palette => palette.id !== id);
-  chrome.storage.local.set({ palettes: extractedPalettes });
+  localStorage.setItem('palettes', JSON.stringify(extractedPalettes));
   showHistoryView(); // Refresh the history view
 }
 
@@ -379,8 +357,12 @@ function showMainView() {
   // Reattach event listeners
   attachEventListeners();
 }
-
 document.addEventListener('DOMContentLoaded', () => {
+  loadPalettes();
+  attachEventListeners();
+});
+
+function attachEventListeners() {
   const analyzeButton = document.getElementById('analyzeButton');
   if (analyzeButton) {
     analyzeButton.addEventListener('click', () => {
@@ -413,12 +395,27 @@ document.addEventListener('DOMContentLoaded', () => {
   if (historyButton) {
     historyButton.addEventListener('click', showHistoryView);
   }
-});
+}
 
-document.addEventListener('DOMContentLoaded', () => {
-  loadPalettes();
-  attachEventListeners();
-});
+
+function activateEyedropper() {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    chrome.tabs.sendMessage(
+      tabs[0].id,
+      { action: 'activateEyedropper' },
+      function (response) {
+        if (chrome.runtime.lastError) {
+          console.error('Error:', chrome.runtime.lastError);
+          alert(
+            'Failed to activate eyedropper. Please refresh the page and try again.'
+          );
+        } else if (response && response.success) {
+          console.log('Eyedropper activated successfully');
+        }
+      }
+    );
+  });
+}
 
 
 
@@ -536,30 +533,6 @@ function showMainView() {
   // Reattach event listeners
   attachEventListeners();
 }
-
-function attachEventListeners() {
-  const analyzeButton = document.getElementById('analyzeButton');
-  analyzeButton.addEventListener('click', () => {
-    startBubbleAnimation();
-    getPageColors();
-  });
-
-  const exportButton = document.getElementById('exportButton');
-  exportButton.addEventListener('click', showExportOptions);
-
-  const eyedropperButton = document.getElementById('eyedropperButton');
-  eyedropperButton.addEventListener('click', activateEyedropper);
-
-  const imageUpload = document.getElementById('imageUpload');
-  imageUpload.addEventListener('change', handleImageUpload);
-
-  const removeImageBtn = document.getElementById('removeImageBtn');
-  removeImageBtn.addEventListener('click', removeUploadedImage);
-
-  const historyButton = document.getElementById('historyButton');
-  historyButton.addEventListener('click', showHistoryView);
-}
-
 
 function rgbToHsl(r, g, b) {
   r /= 255, g /= 255, b /= 255;

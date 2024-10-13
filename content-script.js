@@ -30,34 +30,38 @@ function captureColors() {
 captureColors()
   .then((colors) => colors)
   .catch((error) => ({ error: error.toString() }));
-
 let isEyedropperActive = false;
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'activateEyedropper') {
     isEyedropperActive = true;
-    sendResponse({ success: true });
+    document.body.style.cursor = 'crosshair';
     document.addEventListener('click', pickColor);
+    sendResponse({ success: true });
   }
+  return true;
 });
 
 function pickColor(event) {
   if (!isEyedropperActive) return;
 
-  const x = event.clientX;
-  const y = event.clientY;
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  canvas.width = document.documentElement.scrollWidth;
+  canvas.height = document.documentElement.scrollHeight;
 
-  // Use a canvas to get the color at the clicked position
-  html2canvas(document.body).then(canvas => {
-    const ctx = canvas.getContext('2d');
-    const pixel = ctx.getImageData(x, y, 1, 1).data;
-    const color = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
+  html2canvas(document.body).then((renderedCanvas) => {
+    context.drawImage(renderedCanvas, 0, 0);
+    const x = event.clientX + window.scrollX;
+    const y = event.clientY + window.scrollY;
+    const pixel = context.getImageData(x, y, 1, 1).data;
+    const color = { r: pixel[0], g: pixel[1], b: pixel[2] };
 
-    // Send the color back to the popup
-    chrome.runtime.sendMessage({ action: 'colorPicked', color: { r: pixel[0], g: pixel[1], b: pixel[2] } });
+    chrome.runtime.sendMessage({ action: 'colorPicked', color: color });
 
     // Clean up
     isEyedropperActive = false;
+    document.body.style.cursor = 'default';
     document.removeEventListener('click', pickColor);
   });
 }
