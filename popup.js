@@ -1,3 +1,62 @@
+// Add these functions at the beginning of your file
+function captureVisibleTab() {
+  return new Promise((resolve) => {
+    chrome.tabs.captureVisibleTab(null, { format: 'png' }, (dataUrl) => {
+      resolve(dataUrl);
+    });
+  });
+}
+
+
+function createColorPickerModal(imageDataUrl) {
+  const modal = document.createElement('div');
+  modal.id = 'colorPickerModal';
+  modal.innerHTML = `
+    <div class="modal-content">
+      <img id="screenshotImage" src="${imageDataUrl}" alt="Screenshot">
+      <div id="colorPreview"></div>
+      <button id="closeModal">Close</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  const img = modal.querySelector('#screenshotImage');
+  const colorPreview = modal.querySelector('#colorPreview');
+  const closeButton = modal.querySelector('#closeModal');
+
+  img.addEventListener('click', (e) => {
+    const color = getColorFromImage(e, img);
+    colorPreview.style.backgroundColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
+    displayColors([[color.r, color.g, color.b]]);
+    savePalette([[color.r, color.g, color.b]]);
+  });
+
+  closeButton.addEventListener('click', () => {
+    document.body.removeChild(modal);
+  });
+}
+
+function getColorFromImage(event, img) {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = img.width;
+  canvas.height = img.height;
+  ctx.drawImage(img, 0, 0, img.width, img.height);
+
+  const rect = img.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+  const imageData = ctx.getImageData(x, y, 1, 1);
+  
+  return {
+    r: imageData.data[0],
+    g: imageData.data[1],
+    b: imageData.data[2]
+  };
+}
+
+
+
 // Add this function at the beginning of your file
 function keepPopupOpen() {
   chrome.action.setPopup({ popup: 'popup.html' });
@@ -36,12 +95,14 @@ function getPageColors() {
   });
 }
 
+// Add this to your existing message listener
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'colorPicked') {
     const color = request.color;
     const colors = [[color.r, color.g, color.b]];
     displayColors(colors);
     savePalette(colors);
+    resetUIAfterColorPick();
   }
 });
 
@@ -294,10 +355,12 @@ function showMainView() {
     <div id="palette">
       <p class="initial-text">
         Click the <b>Extract Palette</b> button below to extract colors from
-        the current page's visible area or load & extract from history.
+        the current page's visible area, use the <b>Color Picker</b> to select a specific color,
+        or load & extract from history.
       </p>
     </div>
     <button id="analyzeButton">Extract Palette 🎨</button>
+    <button id="colorPickerButton">Color Picker 🔍</button>
     <button id="exportButton">Export Palette 📤</button>
     <button id="historyButton">View History 📜</button>
     <button id="buyMeACoffeeButton">
@@ -346,6 +409,38 @@ function attachEventListeners() {
   const historyButton = document.getElementById('historyButton');
   if (historyButton) {
     historyButton.addEventListener('click', showHistoryView);
+  }
+
+  const colorPickerButton = document.getElementById('colorPickerButton');
+  if (colorPickerButton) {
+    colorPickerButton.addEventListener('click', activateColorPicker);
+  }
+}
+
+function activateColorPicker() {
+  captureVisibleTab().then((dataUrl) => {
+    createColorPickerModal(dataUrl);
+  });
+}
+
+function updateUIForActiveColorPicker() {
+  const colorPickerButton = document.getElementById('colorPickerButton');
+  if (colorPickerButton) {
+    colorPickerButton.textContent = 'Picking Color...';
+    colorPickerButton.disabled = true;
+  }
+  
+  const palette = document.getElementById('palette');
+  if (palette) {
+    palette.innerHTML = '<p class="instruction-text">Click anywhere on the page to pick a color.</p>';
+  }
+}
+
+function resetUIAfterColorPick() {
+  const colorPickerButton = document.getElementById('colorPickerButton');
+  if (colorPickerButton) {
+    colorPickerButton.textContent = 'Color Picker 🔍';
+    colorPickerButton.disabled = false;
   }
 }
 

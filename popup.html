@@ -529,6 +529,83 @@
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
       transform: translateY(1px);
     }
+
+    #colorPickerButton {
+      width: 100%;
+      padding: 12px 16px;
+      background-color: #3a3a3a;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      margin-top: 16px;
+    }
+
+    #colorPickerButton:hover {
+      background-color: #4a4a4a;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transform: translateY(-1px);
+    }
+
+    #colorPickerButton:active {
+      background-color: #2a2a2a;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      transform: translateY(1px);
+    }
+
+    #colorPickerModal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-content {
+    background-color: #2a2a2a;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 90%;
+    max-height: 90%;
+    overflow: auto;
+    position: relative;
+  }
+
+  #screenshotImage {
+    max-width: 100%;
+    max-height: 70vh;
+    cursor: crosshair;
+  }
+
+  #colorPreview {
+    width: 50px;
+    height: 50px;
+    border: 2px solid #ffffff;
+    margin: 10px auto;
+  }
+
+  #closeModal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #3a3a3a;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
   </style>
 </head>
 
@@ -540,10 +617,12 @@
     <div id="palette">
       <p class="initial-text">
         Click the <b>Extract Palette</b> button below to extract colors from
-        the current page's visible area or load & extract from history.
+        the current page's visible area, use the <b>Color Picker</b> to select a specific color,
+        or load & extract from history.
       </p>
     </div>
     <button id="analyzeButton">Extract Palette 🎨</button>
+    <button id="colorPickerButton">Color Picker 🔍</button>
     <button id="exportButton">Export Palette 📤</button>
     <button id="historyButton">View History 📜</button>
     <button id="buyMeACoffeeButton">
