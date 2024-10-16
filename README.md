@@ -60,7 +60,7 @@ To make Chroma Palette 🎨 the #1 color palette extension worldwide:
 
 - [x] **Palette Export**: Allow users to export palettes in various formats (CSV, JSON, PNG, JPG).
 
-- [] **Historical Palette Storage**: Save extracted palettes with associated URLs for future reference.
+- [x] **Historical Palette Storage**: Save extracted palettes with associated URLs for future reference.
 
 - [] **Color Accessibility Checker**: Analyze color contrasts for accessibility compliance (WCAG).
 
@@ -74,7 +74,7 @@ To make Chroma Palette 🎨 the #1 color palette extension worldwide:
 
 - [] **API Access**: Provide an API for developers to integrate Chroma Palette 🎨's functionality into their own tools.
 
-- [] **Multiple Color Models**: Support RGB, HSL, CMYK, and other color models in addition to HEX.
+- [x] **Multiple Color Models**: Support RGB, HSL, CMYK, and other color models in addition to HEX.
 
 - [] **Color Blindness Simulation**: Show how extracted colors appear to individuals with various types of color blindness.
 
@@ -88,7 +88,7 @@ To make Chroma Palette 🎨 the #1 color palette extension worldwide:
 
 - [] **Localization**: Support multiple languages to cater to a global user base.
 
-- [] **Theme Generation**: Generate full website color themes based on extracted palettes.
+- [x] **Theme Generation**: Generate full website color themes based on extracted palettes.
 
 - [] **Image Color Extraction**: Allow users to upload images for color extraction, not just webpages.
 
