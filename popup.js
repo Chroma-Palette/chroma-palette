@@ -1,59 +1,14 @@
+// Add this function at the beginning of your file
+function keepPopupOpen() {
+  chrome.action.setPopup({ popup: 'popup.html' });
+}
+
 /**
  * This script handles the main functionality of the Chroma Palette 🎨  extension.
  * It manages color extraction, display, and user interactions.
  */
 
 let extractedPalettes = [];
-
-function handleImageUpload(event) {
-  const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const img = new Image();
-      img.onload = function () {
-        const colorThief = new ColorThief();
-        const colors = colorThief.getPalette(img, 6);
-        displayColors(colors);
-        savePalette(colors);
-
-        // Show image preview
-        const imagePreview = document.getElementById('imagePreview');
-        const imagePreviewContainer = document.querySelector('.image-preview-container');
-        imagePreview.src = e.target.result;
-        imagePreviewContainer.style.display = 'block';
-        document.getElementById('removeImageBtn').style.display = 'block';
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-}
-
-function removeUploadedImage() {
-  const imagePreview = document.getElementById('imagePreview');
-  const removeImageBtn = document.getElementById('removeImageBtn');
-  const imageUpload = document.getElementById('imageUpload');
-  const palette = document.getElementById('palette');
-  const imagePreviewContainer = document.querySelector('.image-preview-container');
-
-  imagePreview.src = '';
-  imagePreviewContainer.style.display = 'none';
-  removeImageBtn.style.display = 'none';
-  imageUpload.value = ''; // Reset the file input
-
-  // Clear the color palette and restore the initial text
-  palette.innerHTML = `
-    <p class="initial-text">
-      Click the <b>Extract Palette</b> button below to extract colors from
-      the current page's visible area or <b>Upload an Image</b> to extract colors from it.
-    </p>
-  `;
-  palette.classList.remove('grid');
-
-  // Hide the export button
-  document.getElementById('exportButton').style.display = 'none';
-}
 
 /**
  * Captures the visible tab and extracts colors from it.
@@ -339,14 +294,8 @@ function showMainView() {
     <div id="palette">
       <p class="initial-text">
         Click the <b>Extract Palette</b> button below to extract colors from
-        the current page's visible area or <b>Upload an Image</b> to extract colors from it.
+        the current page's visible area or load & extract from history.
       </p>
-    </div>
-    <label for="imageUpload" id="uploadLabel">Upload Image 🖼️</label>
-    <input type="file" id="imageUpload" accept="image/*" />
-    <div class="image-preview-container">
-      <img id="imagePreview" alt="Uploaded image preview" />
-      <button id="removeImageBtn">&times;</button>
     </div>
     <button id="analyzeButton">Extract Palette 🎨</button>
     <button id="exportButton">Export Palette 📤</button>
@@ -369,10 +318,13 @@ function loadPalettes() {
   }
 }
 
+// Call this function when the popup loads
 document.addEventListener('DOMContentLoaded', () => {
+  keepPopupOpen();
   loadPalettes();
   attachEventListeners();
 });
+
 
 function attachEventListeners() {
   const analyzeButton = document.getElementById('analyzeButton');
@@ -388,15 +340,8 @@ function attachEventListeners() {
     exportButton.addEventListener('click', showExportOptions);
   }
 
-  const imageUpload = document.getElementById('imageUpload');
-  if (imageUpload) {
-    imageUpload.addEventListener('change', handleImageUpload);
-  }
-
-  const removeImageBtn = document.getElementById('removeImageBtn');
-  if (removeImageBtn) {
-    removeImageBtn.addEventListener('click', removeUploadedImage);
-  }
+  // Prevent the popup from closing when clicking outside of it
+  window.addEventListener('blur', keepPopupOpen);
 
   const historyButton = document.getElementById('historyButton');
   if (historyButton) {

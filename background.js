@@ -1,3 +1,17 @@
+// Add this to your existing background.js file
+
+chrome.action.onClicked.addListener((tab) => {
+  chrome.action.setPopup({ tabId: tab.id, popup: 'popup.html' });
+});
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === 'keepPopupOpen') {
+    chrome.action.setPopup({ popup: 'popup.html' });
+    sendResponse({ status: 'Popup set to stay open' });
+  }
+  return true;
+});
+
 /**
  * This background script runs continuously and manages the extension's core functionality.
  * It handles communication between the popup and content scripts, and manages tab capturing.

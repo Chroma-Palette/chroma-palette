@@ -351,42 +351,6 @@
       margin-top: 4px;
     }
 
-    #imageUpload {
-      display: none;
-    }
-
-    #uploadLabel {
-      display: block;
-      width: 100%;
-      padding: 12px 0;
-      /* Changed padding */
-      background-color: #3a3a3a;
-      color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      margin-top: 16px;
-      text-align: center;
-    }
-
-    #uploadLabel:hover {
-      background-color: #4a4a4a;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-      transform: translateY(-1px);
-    }
-
-    #uploadLabel:active {
-      background-color: #2a2a2a;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-      transform: translateY(1px);
-    }
-
     .image-preview-container {
       position: relative;
       width: 100%;
@@ -418,7 +382,6 @@
 
     #analyzeButton,
     #exportButton,
-    #uploadLabel,
     #buyMeACoffeeButton {
       width: 100%;
       padding: 12px 16px;
@@ -577,14 +540,8 @@
     <div id="palette">
       <p class="initial-text">
         Click the <b>Extract Palette</b> button below to extract colors from
-        the current page's visible area or <b>Upload an Image</b> to extract colors from it.
+        the current page's visible area or load & extract from history.
       </p>
-    </div>
-    <label for="imageUpload" id="uploadLabel">Upload Image 🖼️</label>
-    <input type="file" id="imageUpload" accept="image/*" />
-    <div class="image-preview-container">
-      <img id="imagePreview" alt="Uploaded image preview" />
-      <button id="removeImageBtn">&times;</button>
     </div>
     <button id="analyzeButton">Extract Palette 🎨</button>
     <button id="exportButton">Export Palette 📤</button>
