@@ -3,6 +3,8 @@
  * It manages color extraction, display, and user interactions.
  */
 
+let extractedPalettes = [];
+
 function handleImageUpload(event) {
   const file = event.target.files[0];
   if (file) {
@@ -13,6 +15,7 @@ function handleImageUpload(event) {
         const colorThief = new ColorThief();
         const colors = colorThief.getPalette(img, 6);
         displayColors(colors);
+        savePalette(colors);
 
         // Show image preview
         const imagePreview = document.getElementById('imagePreview');
@@ -26,7 +29,6 @@ function handleImageUpload(event) {
     reader.readAsDataURL(file);
   }
 }
-
 
 function removeUploadedImage() {
   const imagePreview = document.getElementById('imagePreview');
@@ -69,6 +71,7 @@ function getPageColors() {
           const colorThief = new ColorThief();
           const colors = colorThief.getPalette(img, 6);
           displayColors(colors);
+          savePalette(colors);
         };
         img.onerror = function () {
           displayError("Failed to load image data");
@@ -82,7 +85,9 @@ function getPageColors() {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'colorPicked') {
     const color = request.color;
-    displayColors([[color.r, color.g, color.b]]);
+    const colors = [[color.r, color.g, color.b]];
+    displayColors(colors);
+    savePalette(colors);
   }
 });
 
@@ -141,6 +146,7 @@ function formatErrorMessage(message) {
   }
   return message;
 }
+
 
 function createConfetti(colors) {
   const confettiContainer = document.createElement('div');
@@ -238,6 +244,7 @@ function createRipple(event) {
   rippleContainer.appendChild(circle);
 }
 
+
 function createBubble() {
   const bubbleContainer = document.querySelector('.bubble-container');
   const bubble = document.createElement('div');
@@ -261,16 +268,16 @@ function startBubbleAnimation() {
     setTimeout(createBubble, i * 300);
   }
 }
-let extractedPalettes = [];
 
-function loadPalettes() {
-  const storedPalettes = localStorage.getItem('palettes');
-  if (storedPalettes) {
-    extractedPalettes = JSON.parse(storedPalettes);
+function loadPalette(id) {
+  const palette = extractedPalettes.find(p => p.id === id);
+  if (palette) {
+    showMainView();
+    displayColors(palette.colors);
   }
 }
 
-function savePalettes(colors) {
+function savePalette(colors) {
   const newPalette = {
     id: Date.now(),
     colors: colors,
@@ -285,6 +292,7 @@ function deletePalette(id) {
   localStorage.setItem('palettes', JSON.stringify(extractedPalettes));
   showHistoryView(); // Refresh the history view
 }
+
 
 function showHistoryView() {
   const content = document.querySelector('.content');
@@ -312,8 +320,7 @@ function showHistoryView() {
     `;
     paletteElement.querySelector('.load-palette').addEventListener('click', (e) => {
       e.stopPropagation();
-      displayColors(palette.colors);
-      showMainView();
+      loadPalette(palette.id);
     });
     paletteElement.querySelector('.delete-palette').addEventListener('click', (e) => {
       e.stopPropagation();
@@ -357,6 +364,14 @@ function showMainView() {
   // Reattach event listeners
   attachEventListeners();
 }
+
+function loadPalettes() {
+  const storedPalettes = localStorage.getItem('palettes');
+  if (storedPalettes) {
+    extractedPalettes = JSON.parse(storedPalettes);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   loadPalettes();
   attachEventListeners();
@@ -397,7 +412,6 @@ function attachEventListeners() {
   }
 }
 
-
 function activateEyedropper() {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     chrome.tabs.sendMessage(
@@ -417,13 +431,10 @@ function activateEyedropper() {
   });
 }
 
-
-
 /**
  * Displays the extracted colors in the popup interface.
  * @param {Array} colors - Array of RGB color arrays.
  */
-
 function displayColors(colors) {
   const palette = document.getElementById('palette');
   if (!palette) {
@@ -467,73 +478,6 @@ function displayColors(colors) {
   }
 }
 
-
-function showHistoryView() {
-  const content = document.querySelector('.content');
-  content.innerHTML = `
-    <h1>Color History</h1>
-    <div id="historyList"></div>
-    <button id="backButton">Back to Palette</button>
-  `;
-
-  const historyList = document.getElementById('historyList');
-  extractedPalettes.forEach(palette => {
-    const paletteElement = document.createElement('div');
-    paletteElement.className = 'history-palette';
-    paletteElement.innerHTML = `
-      <div class="history-colors">
-        ${palette.colors.map(color => `
-          <div class="history-color" style="background-color: rgb(${color.join(',')})"></div>
-        `).join('')}
-      </div>
-      <div class="history-date">${palette.date}</div>
-      <button class="delete-palette" data-id="${palette.id}">Delete</button>
-    `;
-    paletteElement.querySelector('.history-colors').addEventListener('click', () => displayColors(palette.colors));
-    paletteElement.querySelector('.delete-palette').addEventListener('click', (e) => {
-      e.stopPropagation();
-      deletePalette(palette.id);
-    });
-    historyList.appendChild(paletteElement);
-  });
-
-  document.getElementById('backButton').addEventListener('click', showMainView);
-}
-
-
-function showMainView() {
-  const content = document.querySelector('.content');
-  content.innerHTML = `
-    <h1>Chroma Palette 🎨</h1>
-    <p class="instruction-text">Click on any color to copy its HEX code.</p>
-    <div id="palette">
-      <p class="initial-text">
-        Click the <b>Extract Palette</b> button below to extract colors from
-        the current page's visible area, use the <b>Eyedropper</b> to select
-        custom colors, or <b>Upload an Image</b> to extract colors from it.
-      </p>
-    </div>
-    <label for="imageUpload" id="uploadLabel">Upload Image 🖼️</label>
-    <input type="file" id="imageUpload" accept="image/*" />
-    <div class="image-preview-container">
-      <img id="imagePreview" alt="Uploaded image preview" />
-      <button id="removeImageBtn">&times;</button>
-    </div>
-    <button id="analyzeButton">Extract Palette 🎨</button>
-    <button id="eyedropperButton">Eyedropper 👁️</button>
-    <button id="exportButton">Export Palette 📤</button>
-    <button id="historyButton">View History 📜</button>
-    <button id="buyMeACoffeeButton">
-      <a href="https://www.buymeacoffee.com/bymayanksingh" target="_blank">
-        Buy me a Coffee ☕
-      </a>
-    </button>
-  `;
-
-  // Reattach event listeners
-  attachEventListeners();
-}
-
 function rgbToHsl(r, g, b) {
   r /= 255, g /= 255, b /= 255;
   const max = Math.max(r, g, b), min = Math.min(r, g, b);
@@ -569,7 +513,6 @@ function rgbToCmyk(r, g, b) {
   return [Math.round(c * 100), Math.round(m * 100), Math.round(y * 100), Math.round(k * 100)];
 }
 
-
 /**
  * Gets the name of the color closest to the given RGB values.
  * @param {Array} rgb - Array of RGB values [r, g, b].
@@ -586,6 +529,7 @@ function closeExportOptions() {
     exportOptions.remove();
   }
 }
+
 
 function showExportOptions() {
   const exportOptions = document.createElement('div');
@@ -621,6 +565,7 @@ function showExportOptions() {
     .addEventListener('click', closeExportOptions);
 }
 
+
 function exportPalette(format) {
   const colors = Array.from(document.querySelectorAll('.color-box')).map(box => {
     const rgb = box.style.backgroundColor.match(/\d+/g).map(Number);
@@ -652,6 +597,7 @@ function exportCSV(colors) {
   });
   downloadFile(csv, 'palette.csv', 'text/csv');
 }
+
 
 function exportJSON(colors) {
   const json = JSON.stringify(colors, null, 2);
@@ -692,42 +638,6 @@ function exportImage(colors, format) {
     URL.revokeObjectURL(url);
   }, `image/${format}`);
 }
-
-function rgbToHsl(r, g, b) {
-  r /= 255, g /= 255, b /= 255;
-  const max = Math.max(r, g, b), min = Math.min(r, g, b);
-  let h, s, l = (max + min) / 2;
-
-  if (max === min) {
-    h = s = 0; // achromatic
-  } else {
-    const d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch (max) {
-      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-      case g: h = (b - r) / d + 2; break;
-      case b: h = (r - g) / d + 4; break;
-    }
-    h /= 6;
-  }
-
-  return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
-}
-
-function rgbToCmyk(r, g, b) {
-  let c, m, y, k;
-  r = r / 255;
-  g = g / 255;
-  b = b / 255;
-
-  k = Math.min(1 - r, 1 - g, 1 - b);
-  c = (1 - r - k) / (1 - k) || 0;
-  m = (1 - g - k) / (1 - k) || 0;
-  y = (1 - b - k) / (1 - k) || 0;
-
-  return [Math.round(c * 100), Math.round(m * 100), Math.round(y * 100), Math.round(k * 100)];
-}
-
 
 function downloadFile(content, fileName, contentType) {
   const a = document.createElement('a');
