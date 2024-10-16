@@ -7,6 +7,8 @@ function captureVisibleTab() {
   });
 }
 
+let pickedColors = [];
+const MAX_PICKED_COLORS = 6;
 
 function createColorPickerModal(imageDataUrl) {
   const modal = document.createElement('div');
@@ -14,7 +16,9 @@ function createColorPickerModal(imageDataUrl) {
   modal.innerHTML = `
     <div class="modal-content">
       <img id="screenshotImage" src="${imageDataUrl}" alt="Screenshot">
+      <div id="pickedColorsContainer"></div>
       <div id="colorPreview"></div>
+      <button id="finishPicking">Finish Picking</button>
       <button id="closeModal">Close</button>
     </div>
   `;
@@ -22,18 +26,57 @@ function createColorPickerModal(imageDataUrl) {
 
   const img = modal.querySelector('#screenshotImage');
   const colorPreview = modal.querySelector('#colorPreview');
+  const pickedColorsContainer = modal.querySelector('#pickedColorsContainer');
+  const finishPickingButton = modal.querySelector('#finishPicking');
   const closeButton = modal.querySelector('#closeModal');
+
+  updatePickedColorsDisplay();
 
   img.addEventListener('click', (e) => {
     const color = getColorFromImage(e, img);
+    if (pickedColors.length < MAX_PICKED_COLORS) {
+      pickedColors.push(color);
+      updatePickedColorsDisplay();
+    }
     colorPreview.style.backgroundColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
-    displayColors([[color.r, color.g, color.b]]);
-    savePalette([[color.r, color.g, color.b]]);
+  });
+
+  finishPickingButton.addEventListener('click', () => {
+    displayColors(pickedColors.map(color => [color.r, color.g, color.b]));
+    savePalette(pickedColors.map(color => [color.r, color.g, color.b]));
+    document.body.removeChild(modal);
+    pickedColors = []; // Reset picked colors
   });
 
   closeButton.addEventListener('click', () => {
     document.body.removeChild(modal);
+    pickedColors = []; // Reset picked colors
   });
+}
+
+function updatePickedColorsDisplay() {
+  const container = document.querySelector('#pickedColorsContainer');
+  container.innerHTML = '';
+  
+  pickedColors.forEach((color, index) => {
+    const colorBox = document.createElement('div');
+    colorBox.className = 'picked-color-box';
+    colorBox.style.backgroundColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
+    colorBox.addEventListener('click', () => removePickedColor(index));
+    container.appendChild(colorBox);
+  });
+
+  for (let i = pickedColors.length; i < MAX_PICKED_COLORS; i++) {
+    const emptyBox = document.createElement('div');
+    emptyBox.className = 'picked-color-box empty';
+    emptyBox.textContent = '+';
+    container.appendChild(emptyBox);
+  }
+}
+
+function removePickedColor(index) {
+  pickedColors.splice(index, 1);
+  updatePickedColorsDisplay();
 }
 
 function getColorFromImage(event, img) {

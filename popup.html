@@ -606,6 +606,43 @@
     padding: 5px 10px;
     cursor: pointer;
   }
+
+  #pickedColorsContainer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    .picked-color-box {
+      width: 30px;
+      height: 30px;
+      border: 1px solid #fff;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .picked-color-box.empty {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #3a3a3a;
+      color: #fff;
+      font-size: 20px;
+    }
+
+    #finishPicking {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #finishPicking:hover {
+      background-color: #45a049;
+    }
   </style>
 </head>
 
