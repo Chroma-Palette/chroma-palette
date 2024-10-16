@@ -15,7 +15,11 @@ function createColorPickerModal(imageDataUrl) {
   modal.id = 'colorPickerModal';
   modal.innerHTML = `
     <div class="modal-content">
-      <img id="screenshotImage" src="${imageDataUrl}" alt="Screenshot">
+      <h3>Pick Colors</h3>
+      <p class="picker-instruction">Click on the image below to pick colors (max 6)</p>
+      <div class="image-container">
+        <img id="screenshotImage" src="${imageDataUrl}" alt="Screenshot">
+      </div>
       <div id="pickedColorsContainer"></div>
       <div id="colorPreview"></div>
       <button id="finishPicking">Finish Picking</button>
@@ -33,12 +37,18 @@ function createColorPickerModal(imageDataUrl) {
   updatePickedColorsDisplay();
 
   img.addEventListener('click', (e) => {
-    const color = getColorFromImage(e, img);
-    if (pickedColors.length < MAX_PICKED_COLORS) {
-      pickedColors.push(color);
-      updatePickedColorsDisplay();
+    const rect = img.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+      const color = getColorFromImage(e, img);
+      if (pickedColors.length < MAX_PICKED_COLORS) {
+        pickedColors.push(color);
+        updatePickedColorsDisplay();
+      }
+      colorPreview.style.backgroundColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
     }
-    colorPreview.style.backgroundColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
   });
 
   finishPickingButton.addEventListener('click', () => {
