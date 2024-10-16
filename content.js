@@ -16,11 +16,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'getColors') {
     getPageColors();
     sendResponse({ status: 'Colors request received' });
-  } else if (request.action === 'activateEyedropper') {
-    // Code to activate the eyedropper tool
-    // For example, you might want to set up an event listener for mouse clicks
-    // to capture the color of the pixel where the user clicks.
-    sendResponse({ success: true });
   }
   return true; // Indicates that the response will be sent asynchronously
 });

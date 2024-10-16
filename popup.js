@@ -46,8 +46,7 @@ function removeUploadedImage() {
   palette.innerHTML = `
     <p class="initial-text">
       Click the <b>Extract Palette</b> button below to extract colors from
-      the current page's visible area, use the <b>Eyedropper</b> to select
-      custom colors, or <b>Upload an Image</b> to extract colors from it.
+      the current page's visible area or <b>Upload an Image</b> to extract colors from it.
     </p>
   `;
   palette.classList.remove('grid');
@@ -340,8 +339,7 @@ function showMainView() {
     <div id="palette">
       <p class="initial-text">
         Click the <b>Extract Palette</b> button below to extract colors from
-        the current page's visible area, use the <b>Eyedropper</b> to select
-        custom colors, or <b>Upload an Image</b> to extract colors from it.
+        the current page's visible area or <b>Upload an Image</b> to extract colors from it.
       </p>
     </div>
     <label for="imageUpload" id="uploadLabel">Upload Image 🖼️</label>
@@ -351,7 +349,6 @@ function showMainView() {
       <button id="removeImageBtn">&times;</button>
     </div>
     <button id="analyzeButton">Extract Palette 🎨</button>
-    <button id="eyedropperButton">Eyedropper 👁️</button>
     <button id="exportButton">Export Palette 📤</button>
     <button id="historyButton">View History 📜</button>
     <button id="buyMeACoffeeButton">
@@ -391,11 +388,6 @@ function attachEventListeners() {
     exportButton.addEventListener('click', showExportOptions);
   }
 
-  const eyedropperButton = document.getElementById('eyedropperButton');
-  if (eyedropperButton) {
-    eyedropperButton.addEventListener('click', activateEyedropper);
-  }
-
   const imageUpload = document.getElementById('imageUpload');
   if (imageUpload) {
     imageUpload.addEventListener('change', handleImageUpload);
@@ -410,25 +402,6 @@ function attachEventListeners() {
   if (historyButton) {
     historyButton.addEventListener('click', showHistoryView);
   }
-}
-
-function activateEyedropper() {
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    chrome.tabs.sendMessage(
-      tabs[0].id,
-      { action: 'activateEyedropper' },
-      function (response) {
-        if (chrome.runtime.lastError) {
-          console.error('Error:', chrome.runtime.lastError);
-          alert(
-            'Failed to activate eyedropper. Please refresh the page and try again.'
-          );
-        } else if (response && response.success) {
-          console.log('Eyedropper activated successfully');
-        }
-      }
-    );
-  });
 }
 
 /**
