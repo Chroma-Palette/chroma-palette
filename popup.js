@@ -511,7 +511,7 @@ function displayColors(colors) {
   palette.innerHTML = '';
   palette.classList.add('grid');
 
-  colors.forEach((color) => {
+  colors.forEach((color, index) => {
     const colorBox = document.createElement('div');
     colorBox.className = 'color-box';
     colorBox.style.backgroundColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
@@ -528,12 +528,31 @@ function displayColors(colors) {
     colorName.textContent = getColorName(color);
     colorName.className = 'color-name';
 
+    // const accessibilityInfo = document.createElement('div');
+    // accessibilityInfo.className = 'accessibility-info';
+
+    // // Calculate contrast ratio with white and black
+    // const contrastWithWhite = contrastRatio(color, [255, 255, 255]);
+    // const contrastWithBlack = contrastRatio(color, [0, 0, 0]);
+
+    // // Determine which background (white or black) has better contrast
+    // const bestContrast = Math.max(contrastWithWhite, contrastWithBlack);
+    // const bestContrastColor = contrastWithWhite > contrastWithBlack ? 'white' : 'black';
+
+    // const wcagCompliance = getWCAGCompliance(bestContrast);
+
+    // accessibilityInfo.innerHTML = `
+    //   <span>Contrast: ${bestContrast.toFixed(2)} (${bestContrastColor})</span><br>
+    //   <span>AA: ${wcagCompliance.AA.normalText ? '✓' : '✗'} (normal), ${wcagCompliance.AA.largeText ? '✓' : '✗'} (large)</span><br>
+    //   <span>AAA: ${wcagCompliance.AAA.normalText ? '✓' : '✗'} (normal), ${wcagCompliance.AAA.largeText ? '✓' : '✗'} (large)</span>
+    // `;
+
     colorInfo.appendChild(hexText);
     colorInfo.appendChild(colorName);
+    // colorInfo.appendChild(accessibilityInfo);
     colorBox.appendChild(colorInfo);
-    colorBox.addEventListener('click', () =>
-      copyToClipboard(hexCode, colorBox, colors)
-    );
+
+    colorBox.addEventListener('click', () => copyToClipboard(hexCode, colorBox, colors));
     palette.appendChild(colorBox);
   });
 
@@ -542,6 +561,47 @@ function displayColors(colors) {
   if (exportButton) {
     exportButton.style.display = 'block';
   }
+}
+
+function luminance(r, g, b) {
+  const a = [r, g, b].map(function (v) {
+    v /= 255;
+    return v <= 0.03928
+      ? v / 12.92
+      : Math.pow((v + 0.055) / 1.055, 2.4);
+  });
+  return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+}
+
+function contrastRatio(rgb1, rgb2) {
+  const lum1 = luminance(rgb1[0], rgb1[1], rgb1[2]);
+  const lum2 = luminance(rgb2[0], rgb2[1], rgb2[2]);
+  const brightest = Math.max(lum1, lum2);
+  const darkest = Math.min(lum1, lum2);
+  return (brightest + 0.05) / (darkest + 0.05);
+}
+
+function getWCAGCompliance(contrastRatio) {
+  let compliance = {
+    AA: { largeText: false, normalText: false },
+    AAA: { largeText: false, normalText: false }
+  };
+
+  if (contrastRatio >= 4.5) {
+    compliance.AA.normalText = true;
+    compliance.AA.largeText = true;
+  } else if (contrastRatio >= 3) {
+    compliance.AA.largeText = true;
+  }
+
+  if (contrastRatio >= 7) {
+    compliance.AAA.normalText = true;
+    compliance.AAA.largeText = true;
+  } else if (contrastRatio >= 4.5) {
+    compliance.AAA.largeText = true;
+  }
+
+  return compliance;
 }
 
 function rgbToHsl(r, g, b) {
