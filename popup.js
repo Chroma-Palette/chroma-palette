@@ -1,4 +1,3 @@
-// Add these functions at the beginning of your file
 function captureVisibleTab() {
   return new Promise((resolve) => {
     chrome.tabs.captureVisibleTab(null, { format: 'png' }, (dataUrl) => {
@@ -108,8 +107,23 @@ function getColorFromImage(event, img) {
   };
 }
 
+function showScrollNudge() {
+  const scrollNudge = document.createElement('div');
+  scrollNudge.id = 'scrollNudge';
+  scrollNudge.innerHTML = 'More features below ↓';
+  document.body.appendChild(scrollNudge);
 
+  setTimeout(() => {
+    scrollNudge.classList.add('show');
+  }, 300);
 
+  setTimeout(() => {
+    scrollNudge.classList.remove('show');
+    setTimeout(() => {
+      document.body.removeChild(scrollNudge);
+    }, 300);
+  }, 3000);
+}
 // Add this function at the beginning of your file
 function keepPopupOpen() {
   chrome.action.setPopup({ popup: 'popup.html' });
@@ -449,6 +463,8 @@ document.addEventListener('DOMContentLoaded', () => {
   keepPopupOpen();
   loadPalettes();
   attachEventListeners();
+
+  showScrollNudge();
 });
 
 
