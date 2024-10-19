@@ -40,7 +40,7 @@ function createColorPickerModal(imageDataUrl) {
     const rect = img.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
+
     if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
       const color = getColorFromImage(e, img);
       if (pickedColors.length < MAX_PICKED_COLORS) {
@@ -67,7 +67,7 @@ function createColorPickerModal(imageDataUrl) {
 function updatePickedColorsDisplay() {
   const container = document.querySelector('#pickedColorsContainer');
   container.innerHTML = '';
-  
+
   pickedColors.forEach((color, index) => {
     const colorBox = document.createElement('div');
     colorBox.className = 'picked-color-box';
@@ -100,7 +100,7 @@ function getColorFromImage(event, img) {
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
   const imageData = ctx.getImageData(x, y, 1, 1);
-  
+
   return {
     r: imageData.data[0],
     g: imageData.data[1],
@@ -415,12 +415,14 @@ function showMainView() {
     <button id="analyzeButton">Extract Palette 🎨</button>
     <button id="colorPickerButton">Color Picker 🔍</button>
     <button id="exportButton">Export Palette 📤</button>
+    <button id="importButton">Import Palette 📥</button>
     <button id="historyButton">View History 📜</button>
     <button id="buyMeACoffeeButton">
       <a href="https://www.buymeacoffee.com/bymayanksingh" target="_blank">
         Buy me a Coffee ☕
       </a>
     </button>
+    <input type="file" id="fileInput" accept=".cp,.json,.csv" style="display: none;">
   `;
 
   // Reattach event listeners
@@ -456,6 +458,23 @@ function attachEventListeners() {
     exportButton.addEventListener('click', showExportOptions);
   }
 
+  const importButton = document.getElementById('importButton');
+  if (importButton) {
+    importButton.addEventListener('click', () => {
+      document.getElementById('fileInput').click();
+    });
+  }
+
+  const fileInput = document.getElementById('fileInput');
+  if (fileInput) {
+    fileInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        importPalette(file);
+      }
+    });
+  }
+
   // Prevent the popup from closing when clicking outside of it
   window.addEventListener('blur', keepPopupOpen);
 
@@ -470,6 +489,7 @@ function attachEventListeners() {
   }
 }
 
+
 function activateColorPicker() {
   captureVisibleTab().then((dataUrl) => {
     createColorPickerModal(dataUrl);
@@ -482,7 +502,7 @@ function updateUIForActiveColorPicker() {
     colorPickerButton.textContent = 'Picking Color...';
     colorPickerButton.disabled = true;
   }
-  
+
   const palette = document.getElementById('palette');
   if (palette) {
     palette.innerHTML = '<p class="instruction-text">Click anywhere on the page to pick a color.</p>';
@@ -656,7 +676,6 @@ function closeExportOptions() {
   }
 }
 
-
 function showExportOptions() {
   const exportOptions = document.createElement('div');
   exportOptions.id = 'exportOptions';
@@ -669,6 +688,7 @@ function showExportOptions() {
       <button id="exportJSON">JSON</button>
       <button id="exportPNG">PNG</button>
       <button id="exportJPG">JPG</button>
+      <button id="exportCP">CP</button>
     `;
   document.body.appendChild(exportOptions);
 
@@ -684,13 +704,13 @@ function showExportOptions() {
   document
     .getElementById('exportJPG')
     .addEventListener('click', () => exportPalette('jpg'));
-
-  // Add event listener for the close button
+  document
+    .getElementById('exportCP')
+    .addEventListener('click', () => exportPalette('cp'));
   document
     .getElementById('closeExportOptions')
     .addEventListener('click', closeExportOptions);
 }
-
 
 function exportPalette(format) {
   const colors = Array.from(document.querySelectorAll('.color-box')).map(box => {
@@ -713,7 +733,80 @@ function exportPalette(format) {
     case 'jpg':
       exportImage(colors, format);
       break;
+    case 'cp':
+      exportCP(colors);
+      break;
   }
+}
+
+
+function parseJSONPalette(content) {
+  try {
+    const data = JSON.parse(content);
+    if (data.format === 'ChromaPalette') {
+      return data.colors;
+    } else {
+      return data;
+    }
+  } catch (error) {
+    console.error('Error parsing JSON:', error);
+    alert('Error parsing JSON file. Please make sure it\'s a valid palette file.');
+    return null;
+  }
+}
+
+
+function parseCSVPalette(content) {
+  const lines = content.split('\n');
+  const colors = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(',');
+    if (values.length >= 7) {
+      colors.push({
+        name: values[0],
+        hex: values[1],
+        rgb: [parseInt(values[2]), parseInt(values[3]), parseInt(values[4])],
+        hsl: [parseInt(values[5]), parseInt(values[6]), parseInt(values[7])],
+        cmyk: [parseInt(values[8]), parseInt(values[9]), parseInt(values[10]), parseInt(values[11])]
+      });
+    }
+  }
+
+  return colors;
+}
+
+function importPalette(file) {
+  const reader = new FileReader();
+  reader.onload = function (event) {
+    const fileContent = event.target.result;
+    let colors;
+
+    if (file.name.endsWith('.cp') || file.name.endsWith('.json')) {
+      colors = parseJSONPalette(fileContent);
+    } else if (file.name.endsWith('.csv')) {
+      colors = parseCSVPalette(fileContent);
+    } else {
+      alert('Unsupported file format. Please use .cp, .json, or .csv files.');
+      return;
+    }
+
+    if (colors) {
+      displayColors(colors.map(color => color.rgb));
+    }
+  };
+
+  reader.readAsText(file);
+}
+
+function exportCP(colors) {
+  const cpData = {
+    format: 'ChromaPalette',
+    version: '1.0',
+    colors: colors
+  };
+  const json = JSON.stringify(cpData, null, 2);
+  downloadFile(json, 'palette.cp', 'application/json');
 }
 
 function exportCSV(colors) {
