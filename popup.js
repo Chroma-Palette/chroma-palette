@@ -414,15 +414,23 @@ function showMainView() {
     </div>
     <button id="analyzeButton">Extract Palette 🎨</button>
     <button id="colorPickerButton">Color Picker 🔍</button>
+    <button id="importImageButton">Upload Image 🖼️</button>
+    <button id="historyButton">View History 📜</button>
     <button id="exportButton">Export Palette 📤</button>
     <button id="importButton">Import Palette 📥</button>
-    <button id="historyButton">View History 📜</button>
     <button id="buyMeACoffeeButton">
       <a href="https://www.buymeacoffee.com/bymayanksingh" target="_blank">
         Buy me a Coffee ☕
       </a>
     </button>
     <input type="file" id="fileInput" accept=".cp,.json,.csv" style="display: none;">
+    <input type="file" id="imageInput" accept="image/*" style="display: none;">
+    <div id="imagePreviewContainer" style="display: none;">
+      <img id="imagePreview" src="" alt="Imported Image">
+      <button id="extractColorsButton">EXTRACT DOMINANT COLORS 🎨</button>
+      <button id="pickColorsButton">PICK COLORS (MAX 6) 🔍</button>
+      <button id="removeImageButton">REMOVE IMAGE ❌</button>
+    </div>
   `;
 
   // Reattach event listeners
@@ -473,6 +481,39 @@ function attachEventListeners() {
         importPalette(file);
       }
     });
+
+
+    const importImageButton = document.getElementById('importImageButton');
+    if (importImageButton) {
+      importImageButton.addEventListener('click', () => {
+        document.getElementById('imageInput').click();
+      });
+    }
+
+    const imageInput = document.getElementById('imageInput');
+    if (imageInput) {
+      imageInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+          previewImage(file);
+        }
+      });
+    }
+
+    const extractColorsButton = document.getElementById('extractColorsButton');
+    if (extractColorsButton) {
+      extractColorsButton.addEventListener('click', extractDominantColors);
+    }
+
+    const pickColorsButton = document.getElementById('pickColorsButton');
+    if (pickColorsButton) {
+      pickColorsButton.addEventListener('click', activateImageColorPicker);
+    }
+
+    const removeImageButton = document.getElementById('removeImageButton');
+    if (removeImageButton) {
+      removeImageButton.addEventListener('click', removeImage);
+    }
   }
 
   // Prevent the popup from closing when clicking outside of it
@@ -488,6 +529,45 @@ function attachEventListeners() {
     colorPickerButton.addEventListener('click', activateColorPicker);
   }
 }
+
+function scrollToImagePreview() {
+  const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+  if (imagePreviewContainer) {
+    imagePreviewContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function previewImage(file) {
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const imagePreview = document.getElementById('imagePreview');
+    imagePreview.src = e.target.result;
+    document.getElementById('imagePreviewContainer').style.display = 'block';
+
+    // Add a small delay to ensure the container is visible before scrolling
+    setTimeout(scrollToImagePreview, 100);
+  };
+  reader.readAsDataURL(file);
+}
+
+function extractDominantColors() {
+  const imagePreview = document.getElementById('imagePreview');
+  const colorThief = new ColorThief();
+  const palette = colorThief.getPalette(imagePreview, 6);
+  displayColors(palette);
+}
+
+function activateImageColorPicker() {
+  const imagePreview = document.getElementById('imagePreview');
+  createColorPickerModal(imagePreview.src);
+}
+
+function removeImage() {
+  document.getElementById('imagePreviewContainer').style.display = 'none';
+  document.getElementById('imagePreview').src = '';
+  document.getElementById('imageInput').value = '';
+}
+
 
 
 function activateColorPicker() {
