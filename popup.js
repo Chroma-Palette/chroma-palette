@@ -381,8 +381,8 @@ function showHistoryView() {
         `).join('')}
       </div>
       <div class="history-actions">
-        <div class="history-date">${palette.date}</div>
         <button class="load-palette" data-id="${palette.id}">Load</button>
+        <div class="history-date">${palette.date}</div>
         <button class="delete-palette" data-id="${palette.id}">Delete</button>
       </div>
     `;
