@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Chroma Palette 🎨",
-  "version": "1.4",
+  "version": "1.3",
   "description": "Extract the dominant color palette from the visible area of any webpage and pick specific colors using a screenshot.",
   "author": "Mayank Singh",
   "homepage_url": "https://linktr.ee/bymayanksingh",
