@@ -68,7 +68,7 @@ To make Chroma Palette 🎨 the #1 color palette extension worldwide:
 
 - [] **Advanced Color Analysis**: Provide color distribution percentages and dominant vs. accent color identification.
 
-- [] **Custom Color Extraction**: Allow users to select specific areas of a webpage for color extraction.
+- [x] **Custom Color Extraction**: Allow users to select specific areas of a webpage for color extraction.
 
 - [] **Color Trends**: Analyze and display color trends across popular websites or specific industries.
 
@@ -90,7 +90,7 @@ To make Chroma Palette 🎨 the #1 color palette extension worldwide:
 
 - [x] **Theme Generation**: Generate full website color themes based on extracted palettes.
 
-- [] **Image Color Extraction**: Allow users to upload images for color extraction, not just webpages.
+- [x] **Image Color Extraction**: Allow users to upload images for color extraction, not just webpages.
 
 - [] **Color Palette Communities**: Create a platform for users to share and rate color palettes extracted from various websites.
 
