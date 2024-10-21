@@ -40,10 +40,6 @@ To set up the development environment:
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for more details.
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## Contact
 
 For support or queries, please open an issue or contact us at [mayank.singh081997@gmail.com](mailto:mayank.singh081997@gmail.com).
