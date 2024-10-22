@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Import Palette</title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #1a1a1a;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    input[type="file"] {
+      display: none;
+    }
+    label {
+      background-color: #3a3a3a;
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    label:hover {
+      background-color: #4a4a4a;
+    }
+  </style>
+</head>
+<body>
+  <h2>Import Palette</h2>
+  <input type="file" id="fileInput" accept=".cp,.json,.csv">
+  <label for="fileInput">Choose File</label>
+  <script src="import-palette.js"></script>
+</body>
+</html>

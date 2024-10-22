@@ -485,7 +485,7 @@ function attachEventListeners() {
   const importButton = document.getElementById('importButton');
   if (importButton) {
     importButton.addEventListener('click', () => {
-      document.getElementById('fileInput').click();
+      createUploadWindow('palette');
     });
   }
 
@@ -500,9 +500,10 @@ function attachEventListeners() {
 
 
     const importImageButton = document.getElementById('importImageButton');
+    
     if (importImageButton) {
       importImageButton.addEventListener('click', () => {
-        document.getElementById('imageInput').click();
+        createUploadWindow('image');
       });
     }
 
@@ -553,6 +554,7 @@ function scrollToImagePreview() {
   }
 }
 
+// Modify the previewImage function to work with the new window
 function previewImage(file) {
   const reader = new FileReader();
   reader.onload = function (e) {
@@ -961,4 +963,30 @@ function downloadFile(content, fileName, contentType) {
   a.download = fileName;
   a.click();
   URL.revokeObjectURL(a.href);
+}
+
+function createUploadWindow(type) {
+  const windowWidth = 200;
+  const windowHeight = 150;
+  const left = (screen.width - windowWidth) / 2;
+  const top = (screen.height - windowHeight) / 2;
+
+  const url = type === 'image' ? 'upload-image.html' : 'import-palette.html';
+
+  const uploadWindow = window.open(
+    url,
+    'uploadWindow',
+    `width=${windowWidth},height=${windowHeight},left=${left},top=${top},resizable=yes,scrollbars=yes`
+  );
+
+  // Set up message listener for communication with the new window
+  window.addEventListener('message', function(event) {
+    if (event.origin !== window.origin) return;
+
+    if (event.data.type === 'imageUploaded') {
+      previewImage(event.data.file);
+    } else if (event.data.type === 'paletteImported') {
+      importPalette(event.data.file);
+    }
+  });
 }
