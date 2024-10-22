@@ -465,7 +465,12 @@ function removeImage() {
   imagePreviewContainer.innerHTML = '';
   imagePreviewContainer.style.display = "none";
   
-  // Clear any extracted colors or other related data
+  // Reset the palette to its initial state
+  resetPalette();
+}
+
+
+function resetPalette() {
   const palette = document.getElementById("palette");
   if (palette) {
     palette.innerHTML = `
@@ -475,6 +480,13 @@ function removeImage() {
         or load & extract from history.
       </p>
     `;
+    palette.classList.remove("grid");
+  }
+
+  // Hide the export button
+  const exportButton = document.getElementById("exportButton");
+  if (exportButton) {
+    exportButton.style.display = "none";
   }
 }
 
@@ -584,7 +596,11 @@ function scrollToImagePreview() {
   }
 }
 
+// Update the previewImage function to reset the palette when a new image is loaded
 function previewImage(file, imageData) {
+  // Reset the palette first
+  resetPalette();
+
   const imagePreviewContainer = document.getElementById("imagePreviewContainer");
   imagePreviewContainer.innerHTML = `
     <img id="imagePreview" src="${imageData}" alt="Imported Image">
@@ -726,6 +742,7 @@ function displayColors(colors) {
     palette.appendChild(colorBox);
   });
 
+  // Show the export button
   const exportButton = document.getElementById("exportButton");
   if (exportButton) {
     exportButton.style.display = "block";
