@@ -966,8 +966,8 @@ function downloadFile(content, fileName, contentType) {
 }
 
 function createUploadWindow(type) {
-  const windowWidth = 200;
-  const windowHeight = 150;
+  const windowWidth = 400;
+  const windowHeight = 300;
   const left = (screen.width - windowWidth) / 2;
   const top = (screen.height - windowHeight) / 2;
 
