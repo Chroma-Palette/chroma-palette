@@ -9,6 +9,8 @@ function captureVisibleTab() {
 let pickedColors = [];
 const MAX_PICKED_COLORS = 6;
 
+
+
 function createColorPickerModal(imageDataUrl) {
   const modal = document.createElement('div');
   modal.id = 'colorPickerModal';
@@ -484,52 +486,35 @@ function attachEventListeners() {
 
   const importButton = document.getElementById('importButton');
   if (importButton) {
-    importButton.addEventListener('click', () => {
-      document.getElementById('fileInput').click();
-    });
+    setupCustomFileInput(importButton);
   }
 
-  const fileInput = document.getElementById('fileInput');
-  if (fileInput) {
-    fileInput.addEventListener('change', (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        importPalette(file);
-      }
-    });
+  const importImageButton = document.getElementById('importImageButton');
+  if (importImageButton) {
+    setupCustomImageInput(importImageButton);
+  }
 
+  // Add this error handler
+  window.addEventListener('error', (event) => {
+    console.error('An error occurred:', event.error);
+    stopKeepAlive(); // Ensure keep-alive is stopped if an error occurs
+  });
+  
+  
+  // Remove the existing imageInput event listener
+  const extractColorsButton = document.getElementById('extractColorsButton');
+  if (extractColorsButton) {
+    extractColorsButton.addEventListener('click', extractDominantColors);
+  }
 
-    const importImageButton = document.getElementById('importImageButton');
-    if (importImageButton) {
-      importImageButton.addEventListener('click', () => {
-        document.getElementById('imageInput').click();
-      });
-    }
+  const pickColorsButton = document.getElementById('pickColorsButton');
+  if (pickColorsButton) {
+    pickColorsButton.addEventListener('click', activateImageColorPicker);
+  }
 
-    const imageInput = document.getElementById('imageInput');
-    if (imageInput) {
-      imageInput.addEventListener('change', (event) => {
-        const file = event.target.files[0];
-        if (file) {
-          previewImage(file);
-        }
-      });
-    }
-
-    const extractColorsButton = document.getElementById('extractColorsButton');
-    if (extractColorsButton) {
-      extractColorsButton.addEventListener('click', extractDominantColors);
-    }
-
-    const pickColorsButton = document.getElementById('pickColorsButton');
-    if (pickColorsButton) {
-      pickColorsButton.addEventListener('click', activateImageColorPicker);
-    }
-
-    const removeImageButton = document.getElementById('removeImageButton');
-    if (removeImageButton) {
-      removeImageButton.addEventListener('click', removeImage);
-    }
+  const removeImageButton = document.getElementById('removeImageButton');
+  if (removeImageButton) {
+    removeImageButton.addEventListener('click', removeImage);
   }
 
   // Prevent the popup from closing when clicking outside of it
@@ -544,6 +529,63 @@ function attachEventListeners() {
   if (colorPickerButton) {
     colorPickerButton.addEventListener('click', activateColorPicker);
   }
+}
+
+// Add these functions at the beginning of the file
+function startKeepAlive() {
+  chrome.runtime.sendMessage({ action: 'keepAlive' });
+}
+
+function stopKeepAlive() {
+  chrome.runtime.sendMessage({ action: 'stopKeepAlive' });
+}
+
+// Modify the setupCustomFileInput function
+function setupCustomFileInput(importButton) {
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = '.cp,.json,.csv';
+  fileInput.style.display = 'none';
+  document.body.appendChild(fileInput);
+
+  importButton.addEventListener('click', () => {
+    startKeepAlive();
+    fileInput.click();
+  });
+
+  fileInput.addEventListener('change', (event) => {
+    stopKeepAlive();
+    const file = event.target.files[0];
+    if (file) {
+      importPalette(file);
+    }
+  });
+
+  fileInput.addEventListener('cancel', stopKeepAlive);
+}
+
+// Modify the setupCustomImageInput function
+function setupCustomImageInput(importImageButton) {
+  const imageInput = document.createElement('input');
+  imageInput.type = 'file';
+  imageInput.accept = 'image/*';
+  imageInput.style.display = 'none';
+  document.body.appendChild(imageInput);
+
+  importImageButton.addEventListener('click', () => {
+    startKeepAlive();
+    imageInput.click();
+  });
+
+  imageInput.addEventListener('change', (event) => {
+    stopKeepAlive();
+    const file = event.target.files[0];
+    if (file) {
+      previewImage(file);
+    }
+  });
+
+  imageInput.addEventListener('cancel', stopKeepAlive);
 }
 
 function scrollToImagePreview() {

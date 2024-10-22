@@ -4,6 +4,28 @@ chrome.action.onClicked.addListener((tab) => {
   chrome.action.setPopup({ tabId: tab.id, popup: 'popup.html' });
 });
 
+
+let keepAliveInterval;
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === 'keepAlive') {
+    if (keepAliveInterval) {
+      clearInterval(keepAliveInterval);
+    }
+    keepAliveInterval = setInterval(() => {
+      chrome.runtime.sendMessage({ action: 'ping' });
+    }, 1000);
+    sendResponse({ status: 'Keep-alive started' });
+  } else if (request.action === 'stopKeepAlive') {
+    if (keepAliveInterval) {
+      clearInterval(keepAliveInterval);
+      keepAliveInterval = null;
+    }
+    sendResponse({ status: 'Keep-alive stopped' });
+  }
+  return true;
+});
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'keepPopupOpen') {
     chrome.action.setPopup({ popup: 'popup.html' });
