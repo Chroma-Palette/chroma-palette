@@ -7,13 +7,19 @@ chrome.action.onClicked.addListener((tab) => {
 
 let keepAliveInterval;
 
+chrome.runtime.onInstalled.addListener(() => {
+  console.log('Extension installed');
+});
+
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.log('Received message:', request);
   if (request.action === 'keepAlive') {
     if (keepAliveInterval) {
       clearInterval(keepAliveInterval);
     }
     keepAliveInterval = setInterval(() => {
-      chrome.runtime.sendMessage({ action: 'ping' });
+      console.log('Keep-alive ping');
     }, 1000);
     sendResponse({ status: 'Keep-alive started' });
   } else if (request.action === 'stopKeepAlive') {
@@ -22,8 +28,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       keepAliveInterval = null;
     }
     sendResponse({ status: 'Keep-alive stopped' });
+  } else if (request.action === 'captureTab') {
+    captureVisibleTab(sendResponse);
+    return true; // Indicates that the response will be sent asynchronously
   }
-  return true;
+  return true; // Indicates that the response will be sent asynchronously
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -87,4 +96,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       // You could add logic here to handle version updates
     }
   });
+
+  console.log('Background script loaded');
   

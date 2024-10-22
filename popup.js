@@ -540,7 +540,6 @@ function stopKeepAlive() {
   chrome.runtime.sendMessage({ action: 'stopKeepAlive' });
 }
 
-// Modify the setupCustomFileInput function
 function setupCustomFileInput(importButton) {
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
@@ -549,19 +548,17 @@ function setupCustomFileInput(importButton) {
   document.body.appendChild(fileInput);
 
   importButton.addEventListener('click', () => {
-    startKeepAlive();
+    console.log('Import button clicked');
     fileInput.click();
   });
 
   fileInput.addEventListener('change', (event) => {
-    stopKeepAlive();
+    console.log('File selected');
     const file = event.target.files[0];
     if (file) {
       importPalette(file);
     }
   });
-
-  fileInput.addEventListener('cancel', stopKeepAlive);
 }
 
 // Modify the setupCustomImageInput function
@@ -573,19 +570,17 @@ function setupCustomImageInput(importImageButton) {
   document.body.appendChild(imageInput);
 
   importImageButton.addEventListener('click', () => {
-    startKeepAlive();
+    console.log('Import image button clicked');
     imageInput.click();
   });
 
   imageInput.addEventListener('change', (event) => {
-    stopKeepAlive();
+    console.log('Image selected');
     const file = event.target.files[0];
     if (file) {
       previewImage(file);
     }
   });
-
-  imageInput.addEventListener('cancel', stopKeepAlive);
 }
 
 function scrollToImagePreview() {
@@ -1004,3 +999,5 @@ function downloadFile(content, fileName, contentType) {
   a.click();
   URL.revokeObjectURL(a.href);
 }
+
+console.log('Popup script loaded');
