@@ -457,6 +457,28 @@ function showMainView() {
   attachEventListeners();
 }
 
+
+function removeImage() {
+  const imagePreviewContainer = document.getElementById("imagePreviewContainer");
+  
+  // Clear the contents of the container
+  imagePreviewContainer.innerHTML = '';
+  imagePreviewContainer.style.display = "none";
+  
+  // Clear any extracted colors or other related data
+  const palette = document.getElementById("palette");
+  if (palette) {
+    palette.innerHTML = `
+      <p class="initial-text">
+        Click the <b>Extract Palette</b> button below to extract colors from
+        the current page's visible area, use the <b>Color Picker</b> to select a specific color,
+        or load & extract from history.
+      </p>
+    `;
+  }
+}
+
+
 function loadPalettes() {
   const storedPalettes = localStorage.getItem("palettes");
   if (storedPalettes) {
@@ -504,7 +526,6 @@ function attachEventListeners() {
     });
 
     const importImageButton = document.getElementById("importImageButton");
-
     if (importImageButton) {
       importImageButton.addEventListener("click", () => {
         createUploadWindow("image");
@@ -529,6 +550,11 @@ function attachEventListeners() {
     const pickColorsButton = document.getElementById("pickColorsButton");
     if (pickColorsButton) {
       pickColorsButton.addEventListener("click", activateImageColorPicker);
+    }
+
+    const removeImageButton = document.getElementById("removeImageButton");
+    if (removeImageButton) {
+      removeImageButton.addEventListener("click", removeImage);
     }
   }
 
@@ -559,25 +585,54 @@ function scrollToImagePreview() {
 }
 
 function previewImage(file, imageData) {
+  const imagePreviewContainer = document.getElementById("imagePreviewContainer");
+  imagePreviewContainer.innerHTML = `
+    <img id="imagePreview" src="${imageData}" alt="Imported Image">
+    <button id="removeImageButton">&times;</button>
+    <button id="extractColorsButton">EXTRACT DOMINANT COLORS 🎨</button>
+    <button id="pickColorsButton">PICK COLORS (MAX 6) 🔍</button>
+  `;
+  
   const imagePreview = document.getElementById("imagePreview");
-  imagePreview.src = imageData;
   imagePreview.onload = function () {
-    document.getElementById("imagePreviewContainer").style.display = "block";
+    imagePreviewContainer.style.display = "block";
 
-    
+    // Scroll to image preview
     setTimeout(scrollToImagePreview, 100);
 
-    
+    // Add to history
     const colorThief = new ColorThief();
     const palette = colorThief.getPalette(imagePreview, 6);
     addToHistory(palette, "Uploaded Image");
+
+    // Reattach event listeners for the new buttons
+    attachImagePreviewListeners();
   };
   
   imagePreview.onerror = function () {
     console.error("Failed to load image");
     alert("Failed to load the image. Please try again.");
+    removeImage();
   };
 }
+
+function attachImagePreviewListeners() {
+  const removeImageButton = document.getElementById("removeImageButton");
+  if (removeImageButton) {
+    removeImageButton.addEventListener("click", removeImage);
+  }
+
+  const extractColorsButton = document.getElementById("extractColorsButton");
+  if (extractColorsButton) {
+    extractColorsButton.addEventListener("click", extractDominantColors);
+  }
+
+  const pickColorsButton = document.getElementById("pickColorsButton");
+  if (pickColorsButton) {
+    pickColorsButton.addEventListener("click", activateImageColorPicker);
+  }
+}
+
 
 function addToHistory(colors, source) {
   const newPalette = {
