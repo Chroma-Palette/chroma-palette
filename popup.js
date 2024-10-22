@@ -554,18 +554,36 @@ function scrollToImagePreview() {
   }
 }
 
-// Modify the previewImage function to work with the new window
-function previewImage(file) {
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const imagePreview = document.getElementById('imagePreview');
-    imagePreview.src = e.target.result;
+function previewImage(file, imageData) {
+  const imagePreview = document.getElementById('imagePreview');
+  imagePreview.src = imageData;
+  imagePreview.onload = function() {
     document.getElementById('imagePreviewContainer').style.display = 'block';
-
+    
     // Add a small delay to ensure the container is visible before scrolling
     setTimeout(scrollToImagePreview, 100);
+
+    // Extract colors from the uploaded image and add to history
+    const colorThief = new ColorThief();
+    const palette = colorThief.getPalette(imagePreview, 6);
+    addToHistory(palette, 'Uploaded Image');
   };
-  reader.readAsDataURL(file);
+  // Error handling
+  imagePreview.onerror = function() {
+    console.error('Failed to load image');
+    alert('Failed to load the image. Please try again.');
+  };
+}
+
+function addToHistory(colors, source) {
+  const newPalette = {
+    id: Date.now(),
+    colors: colors,
+    date: new Date().toLocaleString(),
+    source: source
+  };
+  extractedPalettes.push(newPalette);
+  localStorage.setItem('palettes', JSON.stringify(extractedPalettes));
 }
 
 function extractDominantColors() {
@@ -978,15 +996,14 @@ function createUploadWindow(type) {
     'uploadWindow',
     `width=${windowWidth},height=${windowHeight},left=${left},top=${top},resizable=yes,scrollbars=yes`
   );
-
-  // Set up message listener for communication with the new window
-  window.addEventListener('message', function(event) {
-    if (event.origin !== window.origin) return;
-
-    if (event.data.type === 'imageUploaded') {
-      previewImage(event.data.file);
-    } else if (event.data.type === 'paletteImported') {
-      importPalette(event.data.file);
-    }
-  });
 }
+
+window.addEventListener('message', function(event) {
+  if (event.origin !== window.origin) return;
+
+  if (event.data.type === 'imageUploaded') {
+    previewImage(event.data.file, event.data.imageData);
+  } else if (event.data.type === 'paletteImported') {
+    importPalette(event.data.file);
+  }
+});

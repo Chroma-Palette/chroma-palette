@@ -824,12 +824,14 @@
     #scrollNudge.show {
       animation: subtle-bounce 0.5s ease-in-out;
     }
+    
   </style>
 </head>
 
 <body>
   <div class="bubble-container"></div>
   <div class="content">
+    <div id="errorMessageContainer"></div>
     <h1>Chroma Palette 🎨</h1>
     <p class="instruction-text">Click on any color to copy its HEX code.</p>
     <div id="palette">
@@ -859,6 +861,7 @@
       <button id="removeImageButton">REMOVE IMAGE ❌</button>
     </div>
   </div>
+
   <script src="ntc.js"></script>
   <script src="popup.js"></script>
   <script src="color-thief.min.js"></script>

@@ -8,7 +8,13 @@ fileInput.addEventListener('change', (event) => {
     reader.onload = (e) => {
       preview.src = e.target.result;
       preview.style.display = 'block';
-      window.opener.postMessage({ type: 'imageUploaded', file: file }, '*');
+      
+      // Send message to the main popup to update history
+      window.opener.postMessage({ 
+        type: 'imageUploaded', 
+        file: file,
+        imageData: e.target.result
+      }, '*');
     };
     reader.readAsDataURL(file);
   }

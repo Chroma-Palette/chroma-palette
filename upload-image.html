@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Upload Image</title>
+  <title>Upload Image - Chroma Palette 🎨</title>
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -18,8 +18,15 @@
       padding: 20px;
       box-sizing: border-box;
     }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      text-align: center;
+      margin-bottom: 20px;
+    }
     h2 {
       margin-bottom: 20px;
+      text-align: center;
+      font-family: 'Playfair Display', serif;
     }
     input[type="file"] {
       display: none;
@@ -27,26 +34,50 @@
     label {
       background-color: #3a3a3a;
       color: #ffffff;
-      padding: 10px 20px;
-      border-radius: 5px;
+      padding: 12px 24px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: all 0.3s ease;
+      font-size: 16px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
     label:hover {
       background-color: #4a4a4a;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transform: translateY(-1px);
     }
     #preview {
       margin-top: 20px;
       max-width: 100%;
       max-height: 200px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    .instructions {
+      text-align: center;
+      margin-bottom: 20px;
+      max-width: 400px;
+      line-height: 1.5;
+    }
+    .supported-formats {
+      font-size: 14px;
+      color: #a0a0a0;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <h2>Upload Image</h2>
+  <h1>Upload Image</h1>
+  <p class="instructions">
+    Choose an image to extract colors from. The image will be processed to create a color palette.
+  </p>
   <input type="file" id="fileInput" accept="image/*">
-  <label for="fileInput">Choose File</label>
-  <img id="preview" style="display:none;">
+  <label for="fileInput">Choose Image</label>
+  <p class="supported-formats">Supported formats: PNG, JPG, JPEG, GIF, WebP</p>
+  <img id="preview" style="display:none;" alt="Image preview">
   <script src="upload-image.js"></script>
 </body>
 </html>

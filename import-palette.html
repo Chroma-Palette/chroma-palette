@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Import Palette</title>
+  <title>Import Palette - Chroma Palette 🎨</title>
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -18,8 +18,9 @@
       padding: 20px;
       box-sizing: border-box;
     }
-    h2 {
+    h1 {
       margin-bottom: 20px;
+      font-family: 'Playfair Display', serif;
     }
     input[type="file"] {
       display: none;
@@ -27,20 +28,42 @@
     label {
       background-color: #3a3a3a;
       color: #ffffff;
-      padding: 10px 20px;
-      border-radius: 5px;
+      padding: 12px 24px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: all 0.3s ease;
+      font-size: 16px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
     label:hover {
       background-color: #4a4a4a;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transform: translateY(-1px);
+    }
+    .instructions {
+      text-align: center;
+      margin-bottom: 20px;
+      max-width: 400px;
+      line-height: 1.5;
+    }
+    .supported-formats {
+      font-size: 14px;
+      color: #a0a0a0;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <h2>Import Palette</h2>
+  <h1>Import Palette</h1>
+  <p class="instructions">
+    Choose a palette file to import. The imported palette will be displayed in the main window.
+  </p>
   <input type="file" id="fileInput" accept=".cp,.json,.csv">
-  <label for="fileInput">Choose File</label>
+  <label for="fileInput">Choose Palette File</label>
+  <p class="supported-formats">Supported formats: .cp, .json, .csv</p>
   <script src="import-palette.js"></script>
 </body>
 </html>
