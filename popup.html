@@ -840,6 +840,35 @@
     #removeImageButton:hover {
       background-color: rgba(255, 255, 255, 0.5);
     }
+
+    #reviewButton {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: #3a3a3a;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin-top: 16px;
+}
+
+#reviewButton:hover {
+  background-color: #4a4a4a;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+#reviewButton:active {
+  background-color: #2a2a2a;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transform: translateY(1px);
+}
     
   </style>
 </head>
@@ -866,6 +895,11 @@
     <button id="buyMeACoffeeButton">
       <a href="https://www.buymeacoffee.com/bymayanksingh" target="_blank">
         Buy me a Coffee ☕
+      </a>
+    </button>
+    <button id="reviewButton">
+      <a href="https://chromewebstore.google.com/detail/chroma-palette-%F0%9F%8E%A8/miokoikjlpbhhfepkneagdjmgakendep/reviews" target="_blank">
+        Leave a Review ⭐
       </a>
     </button>
     <input type="file" id="fileInput" accept=".cp,.json,.csv" style="display: none;">

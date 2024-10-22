@@ -444,6 +444,11 @@ function showMainView() {
         Buy me a Coffee ☕
       </a>
     </button>
+    <button id="reviewButton">
+      <a href="https://chromewebstore.google.com/detail/chroma-palette-%F0%9F%8E%A8/miokoikjlpbhhfepkneagdjmgakendep/reviews" target="_blank">
+        Leave a Review ⭐
+      </a>
+    </button>
     <input type="file" id="fileInput" accept=".cp,.json,.csv" style="display: none;">
     <input type="file" id="imageInput" accept="image/*" style="display: none;">
     <div id="imagePreviewContainer" style="display: none;">
