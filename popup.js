@@ -1,6 +1,6 @@
 function captureVisibleTab() {
   return new Promise((resolve) => {
-    chrome.tabs.captureVisibleTab(null, { format: 'png' }, (dataUrl) => {
+    chrome.tabs.captureVisibleTab(null, { format: "png" }, (dataUrl) => {
       resolve(dataUrl);
     });
   });
@@ -10,8 +10,8 @@ let pickedColors = [];
 const MAX_PICKED_COLORS = 6;
 
 function createColorPickerModal(imageDataUrl) {
-  const modal = document.createElement('div');
-  modal.id = 'colorPickerModal';
+  const modal = document.createElement("div");
+  modal.id = "colorPickerModal";
   modal.innerHTML = `
     <div class="modal-content">
       <h3>Pick Colors</h3>
@@ -27,15 +27,15 @@ function createColorPickerModal(imageDataUrl) {
   `;
   document.body.appendChild(modal);
 
-  const img = modal.querySelector('#screenshotImage');
-  const colorPreview = modal.querySelector('#colorPreview');
-  const pickedColorsContainer = modal.querySelector('#pickedColorsContainer');
-  const finishPickingButton = modal.querySelector('#finishPicking');
-  const closeButton = modal.querySelector('#closeModal');
+  const img = modal.querySelector("#screenshotImage");
+  const colorPreview = modal.querySelector("#colorPreview");
+  const pickedColorsContainer = modal.querySelector("#pickedColorsContainer");
+  const finishPickingButton = modal.querySelector("#finishPicking");
+  const closeButton = modal.querySelector("#closeModal");
 
   updatePickedColorsDisplay();
 
-  img.addEventListener('click', (e) => {
+  img.addEventListener("click", (e) => {
     const rect = img.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -50,35 +50,35 @@ function createColorPickerModal(imageDataUrl) {
     }
   });
 
-  finishPickingButton.addEventListener('click', () => {
-    displayColors(pickedColors.map(color => [color.r, color.g, color.b]));
-    savePalette(pickedColors.map(color => [color.r, color.g, color.b]));
+  finishPickingButton.addEventListener("click", () => {
+    displayColors(pickedColors.map((color) => [color.r, color.g, color.b]));
+    savePalette(pickedColors.map((color) => [color.r, color.g, color.b]));
     document.body.removeChild(modal);
-    pickedColors = []; // Reset picked colors
+    pickedColors = [];
   });
 
-  closeButton.addEventListener('click', () => {
+  closeButton.addEventListener("click", () => {
     document.body.removeChild(modal);
-    pickedColors = []; // Reset picked colors
+    pickedColors = [];
   });
 }
 
 function updatePickedColorsDisplay() {
-  const container = document.querySelector('#pickedColorsContainer');
-  container.innerHTML = '';
+  const container = document.querySelector("#pickedColorsContainer");
+  container.innerHTML = "";
 
   pickedColors.forEach((color, index) => {
-    const colorBox = document.createElement('div');
-    colorBox.className = 'picked-color-box';
+    const colorBox = document.createElement("div");
+    colorBox.className = "picked-color-box";
     colorBox.style.backgroundColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
-    colorBox.addEventListener('click', () => removePickedColor(index));
+    colorBox.addEventListener("click", () => removePickedColor(index));
     container.appendChild(colorBox);
   });
 
   for (let i = pickedColors.length; i < MAX_PICKED_COLORS; i++) {
-    const emptyBox = document.createElement('div');
-    emptyBox.className = 'picked-color-box empty';
-    emptyBox.textContent = '+';
+    const emptyBox = document.createElement("div");
+    emptyBox.className = "picked-color-box empty";
+    emptyBox.textContent = "+";
     container.appendChild(emptyBox);
   }
 }
@@ -89,8 +89,8 @@ function removePickedColor(index) {
 }
 
 function getColorFromImage(event, img) {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
   canvas.width = img.width;
   canvas.height = img.height;
   ctx.drawImage(img, 0, 0, img.width, img.height);
@@ -103,46 +103,37 @@ function getColorFromImage(event, img) {
   return {
     r: imageData.data[0],
     g: imageData.data[1],
-    b: imageData.data[2]
+    b: imageData.data[2],
   };
 }
 
 function showScrollNudge() {
-  const scrollNudge = document.createElement('div');
-  scrollNudge.id = 'scrollNudge';
-  scrollNudge.innerHTML = 'More features below ↓';
+  const scrollNudge = document.createElement("div");
+  scrollNudge.id = "scrollNudge";
+  scrollNudge.innerHTML = "More features below ↓";
   document.body.appendChild(scrollNudge);
 
   setTimeout(() => {
-    scrollNudge.classList.add('show');
+    scrollNudge.classList.add("show");
   }, 300);
 
   setTimeout(() => {
-    scrollNudge.classList.remove('show');
+    scrollNudge.classList.remove("show");
     setTimeout(() => {
       document.body.removeChild(scrollNudge);
     }, 300);
   }, 3000);
 }
-// Add this function at the beginning of your file
-function keepPopupOpen() {
-  chrome.action.setPopup({ popup: 'popup.html' });
-}
 
-/**
- * This script handles the main functionality of the Chroma Palette 🎨  extension.
- * It manages color extraction, display, and user interactions.
- */
+function keepPopupOpen() {
+  chrome.action.setPopup({ popup: "popup.html" });
+}
 
 let extractedPalettes = [];
 
-/**
- * Captures the visible tab and extracts colors from it.
- * Handles potential errors during the process.
- */
 function getPageColors() {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    chrome.tabs.captureVisibleTab(null, { format: 'png' }, function (dataUrl) {
+    chrome.tabs.captureVisibleTab(null, { format: "png" }, function (dataUrl) {
       if (chrome.runtime.lastError) {
         displayError(chrome.runtime.lastError.message);
       } else {
@@ -162,9 +153,9 @@ function getPageColors() {
   });
 }
 
-// Add this to your existing message listener
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === 'colorPicked') {
+  if (request.action === "colorPicked") {
     const color = request.color;
     const colors = [[color.r, color.g, color.b]];
     displayColors(colors);
@@ -181,7 +172,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
  * @return {string} Hex color code
  */
 function rgbToHex(r, g, b) {
-  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+  return (
+    "#" +
+    ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()
+  );
 }
 
 /**
@@ -190,16 +184,19 @@ function rgbToHex(r, g, b) {
  * @param {HTMLElement} colorBox - The color box element that was clicked
  */
 function copyToClipboard(text, colorBox, colors) {
-  navigator.clipboard.writeText(text).then(() => {
-    const feedbackElement = document.createElement('div');
-    feedbackElement.className = 'copy-feedback';
-    feedbackElement.textContent = 'Copied!';
-    colorBox.appendChild(feedbackElement);
-    setTimeout(() => colorBox.removeChild(feedbackElement), 1500);
-    createConfetti(colors);
-  }).catch(err => {
-    console.error('Failed to copy: ', err);
-  });
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      const feedbackElement = document.createElement("div");
+      feedbackElement.className = "copy-feedback";
+      feedbackElement.textContent = "Copied!";
+      colorBox.appendChild(feedbackElement);
+      setTimeout(() => colorBox.removeChild(feedbackElement), 1500);
+      createConfetti(colors);
+    })
+    .catch((err) => {
+      console.error("Failed to copy: ", err);
+    });
 }
 
 /**
@@ -207,14 +204,14 @@ function copyToClipboard(text, colorBox, colors) {
  * @param {string} message - The error message to display
  */
 function displayError(message) {
-  const palette = document.getElementById('palette');
+  const palette = document.getElementById("palette");
   palette.innerHTML = `
           <div class="error-message">
               <p>Error: ${formatErrorMessage(message)}</p>
               <p class="error-hint">Please try again in a few moments.</p>
           </div>
       `;
-  palette.classList.remove('grid');
+  palette.classList.remove("grid");
 }
 
 /**
@@ -229,15 +226,14 @@ function formatErrorMessage(message) {
   return message;
 }
 
-
 function createConfetti(colors) {
-  const confettiContainer = document.createElement('div');
-  confettiContainer.style.position = 'fixed';
-  confettiContainer.style.top = '0';
-  confettiContainer.style.left = '0';
-  confettiContainer.style.width = '100%';
-  confettiContainer.style.height = '100%';
-  confettiContainer.style.pointerEvents = 'none';
+  const confettiContainer = document.createElement("div");
+  confettiContainer.style.position = "fixed";
+  confettiContainer.style.top = "0";
+  confettiContainer.style.left = "0";
+  confettiContainer.style.width = "100%";
+  confettiContainer.style.height = "100%";
+  confettiContainer.style.pointerEvents = "none";
   document.body.appendChild(confettiContainer);
 
   const confettiCount = 50;
@@ -272,18 +268,21 @@ function createConfetti(colors) {
   }
 
   function updateConfetti() {
-    confettiContainer.innerHTML = '';
+    confettiContainer.innerHTML = "";
     confettis.forEach((confetti, index) => {
-      confetti.velocity.x += Math.random() > 0.5 ? Math.random() : -Math.random();
+      confetti.velocity.x +=
+        Math.random() > 0.5 ? Math.random() : -Math.random();
       confetti.velocity.y += gravity;
       confetti.velocity.x *= drag;
       confetti.velocity.y = Math.min(confetti.velocity.y, terminalVelocity);
       confetti.position.x += confetti.velocity.x;
       confetti.position.y += confetti.velocity.y;
-      confetti.scale.y = Math.cos((confetti.position.y + confetti.rotation) * 0.1);
+      confetti.scale.y = Math.cos(
+        (confetti.position.y + confetti.rotation) * 0.1
+      );
 
-      const confettiElement = document.createElement('div');
-      confettiElement.style.position = 'absolute';
+      const confettiElement = document.createElement("div");
+      confettiElement.style.position = "absolute";
       confettiElement.style.width = `${confetti.dimensions.x}px`;
       confettiElement.style.height = `${confetti.dimensions.y}px`;
       confettiElement.style.backgroundColor = confetti.color;
@@ -326,11 +325,10 @@ function createRipple(event) {
   rippleContainer.appendChild(circle);
 }
 
-
 function createBubble() {
-  const bubbleContainer = document.querySelector('.bubble-container');
-  const bubble = document.createElement('div');
-  bubble.classList.add('bubble');
+  const bubbleContainer = document.querySelector(".bubble-container");
+  const bubble = document.createElement("div");
+  bubble.classList.add("bubble");
 
   const size = Math.random() * 30 + 10;
   bubble.style.width = `${size}px`;
@@ -352,7 +350,7 @@ function startBubbleAnimation() {
 }
 
 function loadPalette(id) {
-  const palette = extractedPalettes.find(p => p.id === id);
+  const palette = extractedPalettes.find((p) => p.id === id);
   if (palette) {
     showMainView();
     displayColors(palette.colors);
@@ -363,36 +361,41 @@ function savePalette(colors) {
   const newPalette = {
     id: Date.now(),
     colors: colors,
-    date: new Date().toLocaleString()
+    date: new Date().toLocaleString(),
   };
   extractedPalettes.push(newPalette);
-  localStorage.setItem('palettes', JSON.stringify(extractedPalettes));
+  localStorage.setItem("palettes", JSON.stringify(extractedPalettes));
 }
 
 function deletePalette(id) {
-  extractedPalettes = extractedPalettes.filter(palette => palette.id !== id);
-  localStorage.setItem('palettes', JSON.stringify(extractedPalettes));
-  showHistoryView(); // Refresh the history view
+  extractedPalettes = extractedPalettes.filter((palette) => palette.id !== id);
+  localStorage.setItem("palettes", JSON.stringify(extractedPalettes));
+  showHistoryView(); 
 }
 
-
 function showHistoryView() {
-  const content = document.querySelector('.content');
+  const content = document.querySelector(".content");
   content.innerHTML = `
     <h1>Color History</h1>
     <div id="historyList"></div>
     <button id="backButton">Back to Palette</button>
   `;
 
-  const historyList = document.getElementById('historyList');
-  extractedPalettes.forEach(palette => {
-    const paletteElement = document.createElement('div');
-    paletteElement.className = 'history-palette';
+  const historyList = document.getElementById("historyList");
+  extractedPalettes.forEach((palette) => {
+    const paletteElement = document.createElement("div");
+    paletteElement.className = "history-palette";
     paletteElement.innerHTML = `
       <div class="history-colors">
-        ${palette.colors.map(color => `
-          <div class="history-color" style="background-color: rgb(${color.join(',')})"></div>
-        `).join('')}
+        ${palette.colors
+          .map(
+            (color) => `
+          <div class="history-color" style="background-color: rgb(${color.join(
+            ","
+          )})"></div>
+        `
+          )
+          .join("")}
       </div>
       <div class="history-actions">
         <button class="load-palette" data-id="${palette.id}">Load</button>
@@ -400,22 +403,26 @@ function showHistoryView() {
         <button class="delete-palette" data-id="${palette.id}">Delete</button>
       </div>
     `;
-    paletteElement.querySelector('.load-palette').addEventListener('click', (e) => {
-      e.stopPropagation();
-      loadPalette(palette.id);
-    });
-    paletteElement.querySelector('.delete-palette').addEventListener('click', (e) => {
-      e.stopPropagation();
-      deletePalette(palette.id);
-    });
+    paletteElement
+      .querySelector(".load-palette")
+      .addEventListener("click", (e) => {
+        e.stopPropagation();
+        loadPalette(palette.id);
+      });
+    paletteElement
+      .querySelector(".delete-palette")
+      .addEventListener("click", (e) => {
+        e.stopPropagation();
+        deletePalette(palette.id);
+      });
     historyList.appendChild(paletteElement);
   });
 
-  document.getElementById('backButton').addEventListener('click', showMainView);
+  document.getElementById("backButton").addEventListener("click", showMainView);
 }
 
 function showMainView() {
-  const content = document.querySelector('.content');
+  const content = document.querySelector(".content");
   content.innerHTML = `
     <h1>Chroma Palette 🎨</h1>
     <p class="instruction-text">Click on any color to copy its HEX code.</p>
@@ -443,23 +450,22 @@ function showMainView() {
       <img id="imagePreview" src="" alt="Imported Image">
       <button id="extractColorsButton">EXTRACT DOMINANT COLORS 🎨</button>
       <button id="pickColorsButton">PICK COLORS (MAX 6) 🔍</button>
-      <button id="removeImageButton">REMOVE IMAGE ❌</button>
     </div>
   `;
 
-  // Reattach event listeners
+  
   attachEventListeners();
 }
 
 function loadPalettes() {
-  const storedPalettes = localStorage.getItem('palettes');
+  const storedPalettes = localStorage.getItem("palettes");
   if (storedPalettes) {
     extractedPalettes = JSON.parse(storedPalettes);
   }
 }
 
-// Call this function when the popup loads
-document.addEventListener('DOMContentLoaded', () => {
+
+document.addEventListener("DOMContentLoaded", () => {
   keepPopupOpen();
   loadPalettes();
   attachEventListeners();
@@ -467,49 +473,47 @@ document.addEventListener('DOMContentLoaded', () => {
   showScrollNudge();
 });
 
-
 function attachEventListeners() {
-  const analyzeButton = document.getElementById('analyzeButton');
+  const analyzeButton = document.getElementById("analyzeButton");
   if (analyzeButton) {
-    analyzeButton.addEventListener('click', () => {
+    analyzeButton.addEventListener("click", () => {
       startBubbleAnimation();
       getPageColors();
     });
   }
 
-  const exportButton = document.getElementById('exportButton');
+  const exportButton = document.getElementById("exportButton");
   if (exportButton) {
-    exportButton.addEventListener('click', showExportOptions);
+    exportButton.addEventListener("click", showExportOptions);
   }
 
-  const importButton = document.getElementById('importButton');
+  const importButton = document.getElementById("importButton");
   if (importButton) {
-    importButton.addEventListener('click', () => {
-      createUploadWindow('palette');
+    importButton.addEventListener("click", () => {
+      createUploadWindow("palette");
     });
   }
 
-  const fileInput = document.getElementById('fileInput');
+  const fileInput = document.getElementById("fileInput");
   if (fileInput) {
-    fileInput.addEventListener('change', (event) => {
+    fileInput.addEventListener("change", (event) => {
       const file = event.target.files[0];
       if (file) {
         importPalette(file);
       }
     });
 
+    const importImageButton = document.getElementById("importImageButton");
 
-    const importImageButton = document.getElementById('importImageButton');
-    
     if (importImageButton) {
-      importImageButton.addEventListener('click', () => {
-        createUploadWindow('image');
+      importImageButton.addEventListener("click", () => {
+        createUploadWindow("image");
       });
     }
 
-    const imageInput = document.getElementById('imageInput');
+    const imageInput = document.getElementById("imageInput");
     if (imageInput) {
-      imageInput.addEventListener('change', (event) => {
+      imageInput.addEventListener("change", (event) => {
         const file = event.target.files[0];
         if (file) {
           previewImage(file);
@@ -517,61 +521,61 @@ function attachEventListeners() {
       });
     }
 
-    const extractColorsButton = document.getElementById('extractColorsButton');
+    const extractColorsButton = document.getElementById("extractColorsButton");
     if (extractColorsButton) {
-      extractColorsButton.addEventListener('click', extractDominantColors);
+      extractColorsButton.addEventListener("click", extractDominantColors);
     }
 
-    const pickColorsButton = document.getElementById('pickColorsButton');
+    const pickColorsButton = document.getElementById("pickColorsButton");
     if (pickColorsButton) {
-      pickColorsButton.addEventListener('click', activateImageColorPicker);
-    }
-
-    const removeImageButton = document.getElementById('removeImageButton');
-    if (removeImageButton) {
-      removeImageButton.addEventListener('click', removeImage);
+      pickColorsButton.addEventListener("click", activateImageColorPicker);
     }
   }
 
-  // Prevent the popup from closing when clicking outside of it
-  window.addEventListener('blur', keepPopupOpen);
+  
+  window.addEventListener("blur", keepPopupOpen);
 
-  const historyButton = document.getElementById('historyButton');
+  const historyButton = document.getElementById("historyButton");
   if (historyButton) {
-    historyButton.addEventListener('click', showHistoryView);
+    historyButton.addEventListener("click", showHistoryView);
   }
 
-  const colorPickerButton = document.getElementById('colorPickerButton');
+  const colorPickerButton = document.getElementById("colorPickerButton");
   if (colorPickerButton) {
-    colorPickerButton.addEventListener('click', activateColorPicker);
+    colorPickerButton.addEventListener("click", activateColorPicker);
   }
 }
 
 function scrollToImagePreview() {
-  const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+  const imagePreviewContainer = document.getElementById(
+    "imagePreviewContainer"
+  );
   if (imagePreviewContainer) {
-    imagePreviewContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    imagePreviewContainer.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   }
 }
 
 function previewImage(file, imageData) {
-  const imagePreview = document.getElementById('imagePreview');
+  const imagePreview = document.getElementById("imagePreview");
   imagePreview.src = imageData;
-  imagePreview.onload = function() {
-    document.getElementById('imagePreviewContainer').style.display = 'block';
+  imagePreview.onload = function () {
+    document.getElementById("imagePreviewContainer").style.display = "block";
+
     
-    // Add a small delay to ensure the container is visible before scrolling
     setTimeout(scrollToImagePreview, 100);
 
-    // Extract colors from the uploaded image and add to history
+    
     const colorThief = new ColorThief();
     const palette = colorThief.getPalette(imagePreview, 6);
-    addToHistory(palette, 'Uploaded Image');
+    addToHistory(palette, "Uploaded Image");
   };
-  // Error handling
-  imagePreview.onerror = function() {
-    console.error('Failed to load image');
-    alert('Failed to load the image. Please try again.');
+  
+  imagePreview.onerror = function () {
+    console.error("Failed to load image");
+    alert("Failed to load the image. Please try again.");
   };
 }
 
@@ -580,31 +584,23 @@ function addToHistory(colors, source) {
     id: Date.now(),
     colors: colors,
     date: new Date().toLocaleString(),
-    source: source
+    source: source,
   };
   extractedPalettes.push(newPalette);
-  localStorage.setItem('palettes', JSON.stringify(extractedPalettes));
+  localStorage.setItem("palettes", JSON.stringify(extractedPalettes));
 }
 
 function extractDominantColors() {
-  const imagePreview = document.getElementById('imagePreview');
+  const imagePreview = document.getElementById("imagePreview");
   const colorThief = new ColorThief();
   const palette = colorThief.getPalette(imagePreview, 6);
   displayColors(palette);
 }
 
 function activateImageColorPicker() {
-  const imagePreview = document.getElementById('imagePreview');
+  const imagePreview = document.getElementById("imagePreview");
   createColorPickerModal(imagePreview.src);
 }
-
-function removeImage() {
-  document.getElementById('imagePreviewContainer').style.display = 'none';
-  document.getElementById('imagePreview').src = '';
-  document.getElementById('imageInput').value = '';
-}
-
-
 
 function activateColorPicker() {
   captureVisibleTab().then((dataUrl) => {
@@ -613,22 +609,23 @@ function activateColorPicker() {
 }
 
 function updateUIForActiveColorPicker() {
-  const colorPickerButton = document.getElementById('colorPickerButton');
+  const colorPickerButton = document.getElementById("colorPickerButton");
   if (colorPickerButton) {
-    colorPickerButton.textContent = 'Picking Color...';
+    colorPickerButton.textContent = "Picking Color...";
     colorPickerButton.disabled = true;
   }
 
-  const palette = document.getElementById('palette');
+  const palette = document.getElementById("palette");
   if (palette) {
-    palette.innerHTML = '<p class="instruction-text">Click anywhere on the page to pick a color.</p>';
+    palette.innerHTML =
+      '<p class="instruction-text">Click anywhere on the page to pick a color.</p>';
   }
 }
 
 function resetUIAfterColorPick() {
-  const colorPickerButton = document.getElementById('colorPickerButton');
+  const colorPickerButton = document.getElementById("colorPickerButton");
   if (colorPickerButton) {
-    colorPickerButton.textContent = 'Color Picker 🔍';
+    colorPickerButton.textContent = "Color Picker 🔍";
     colorPickerButton.disabled = false;
   }
 }
@@ -638,73 +635,52 @@ function resetUIAfterColorPick() {
  * @param {Array} colors - Array of RGB color arrays.
  */
 function displayColors(colors) {
-  const palette = document.getElementById('palette');
+  const palette = document.getElementById("palette");
   if (!palette) {
-    console.error('Palette element not found');
+    console.error("Palette element not found");
     return;
   }
 
-  palette.innerHTML = '';
-  palette.classList.add('grid');
+  palette.innerHTML = "";
+  palette.classList.add("grid");
 
   colors.forEach((color, index) => {
-    const colorBox = document.createElement('div');
-    colorBox.className = 'color-box';
+    const colorBox = document.createElement("div");
+    colorBox.className = "color-box";
     colorBox.style.backgroundColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
 
-    const colorInfo = document.createElement('div');
-    colorInfo.className = 'color-info';
+    const colorInfo = document.createElement("div");
+    colorInfo.className = "color-info";
 
-    const hexText = document.createElement('div');
+    const hexText = document.createElement("div");
     const hexCode = rgbToHex(color[0], color[1], color[2]);
     hexText.textContent = hexCode;
-    hexText.className = 'color-hex';
+    hexText.className = "color-hex";
 
-    const colorName = document.createElement('div');
+    const colorName = document.createElement("div");
     colorName.textContent = getColorName(color);
-    colorName.className = 'color-name';
-
-    // const accessibilityInfo = document.createElement('div');
-    // accessibilityInfo.className = 'accessibility-info';
-
-    // // Calculate contrast ratio with white and black
-    // const contrastWithWhite = contrastRatio(color, [255, 255, 255]);
-    // const contrastWithBlack = contrastRatio(color, [0, 0, 0]);
-
-    // // Determine which background (white or black) has better contrast
-    // const bestContrast = Math.max(contrastWithWhite, contrastWithBlack);
-    // const bestContrastColor = contrastWithWhite > contrastWithBlack ? 'white' : 'black';
-
-    // const wcagCompliance = getWCAGCompliance(bestContrast);
-
-    // accessibilityInfo.innerHTML = `
-    //   <span>Contrast: ${bestContrast.toFixed(2)} (${bestContrastColor})</span><br>
-    //   <span>AA: ${wcagCompliance.AA.normalText ? '✓' : '✗'} (normal), ${wcagCompliance.AA.largeText ? '✓' : '✗'} (large)</span><br>
-    //   <span>AAA: ${wcagCompliance.AAA.normalText ? '✓' : '✗'} (normal), ${wcagCompliance.AAA.largeText ? '✓' : '✗'} (large)</span>
-    // `;
+    colorName.className = "color-name";
 
     colorInfo.appendChild(hexText);
     colorInfo.appendChild(colorName);
-    // colorInfo.appendChild(accessibilityInfo);
     colorBox.appendChild(colorInfo);
 
-    colorBox.addEventListener('click', () => copyToClipboard(hexCode, colorBox, colors));
+    colorBox.addEventListener("click", () =>
+      copyToClipboard(hexCode, colorBox, colors)
+    );
     palette.appendChild(colorBox);
   });
 
-  // Show export button after colors are displayed
-  const exportButton = document.getElementById('exportButton');
+  const exportButton = document.getElementById("exportButton");
   if (exportButton) {
-    exportButton.style.display = 'block';
+    exportButton.style.display = "block";
   }
 }
 
 function luminance(r, g, b) {
   const a = [r, g, b].map(function (v) {
     v /= 255;
-    return v <= 0.03928
-      ? v / 12.92
-      : Math.pow((v + 0.055) / 1.055, 2.4);
+    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
   });
   return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
 }
@@ -720,7 +696,7 @@ function contrastRatio(rgb1, rgb2) {
 function getWCAGCompliance(contrastRatio) {
   let compliance = {
     AA: { largeText: false, normalText: false },
-    AAA: { largeText: false, normalText: false }
+    AAA: { largeText: false, normalText: false },
   };
 
   if (contrastRatio >= 4.5) {
@@ -741,19 +717,28 @@ function getWCAGCompliance(contrastRatio) {
 }
 
 function rgbToHsl(r, g, b) {
-  r /= 255, g /= 255, b /= 255;
-  const max = Math.max(r, g, b), min = Math.min(r, g, b);
-  let h, s, l = (max + min) / 2;
+  (r /= 255), (g /= 255), (b /= 255);
+  const max = Math.max(r, g, b),
+    min = Math.min(r, g, b);
+  let h,
+    s,
+    l = (max + min) / 2;
 
   if (max === min) {
-    h = s = 0; // achromatic
+    h = s = 0;
   } else {
     const d = max - min;
     s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
     switch (max) {
-      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-      case g: h = (b - r) / d + 2; break;
-      case b: h = (r - g) / d + 4; break;
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r - g) / d + 4;
+        break;
     }
     h /= 6;
   }
@@ -772,7 +757,12 @@ function rgbToCmyk(r, g, b) {
   m = (1 - g - k) / (1 - k) || 0;
   y = (1 - b - k) / (1 - k) || 0;
 
-  return [Math.round(c * 100), Math.round(m * 100), Math.round(y * 100), Math.round(k * 100)];
+  return [
+    Math.round(c * 100),
+    Math.round(m * 100),
+    Math.round(y * 100),
+    Math.round(k * 100),
+  ];
 }
 
 /**
@@ -782,19 +772,19 @@ function rgbToCmyk(r, g, b) {
  */
 function getColorName(rgb) {
   const color = ntc.name(rgbToHex(rgb[0], rgb[1], rgb[2]));
-  return color[1]; // Returns the color name
+  return color[1];
 }
 
 function closeExportOptions() {
-  const exportOptions = document.getElementById('exportOptions');
+  const exportOptions = document.getElementById("exportOptions");
   if (exportOptions) {
     exportOptions.remove();
   }
 }
 
 function showExportOptions() {
-  const exportOptions = document.createElement('div');
-  exportOptions.id = 'exportOptions';
+  const exportOptions = document.createElement("div");
+  exportOptions.id = "exportOptions";
   exportOptions.innerHTML = `
       <div class="export-header">
         <h3>Export</h3>
@@ -809,82 +799,89 @@ function showExportOptions() {
   document.body.appendChild(exportOptions);
 
   document
-    .getElementById('exportCSV')
-    .addEventListener('click', () => exportPalette('csv'));
+    .getElementById("exportCSV")
+    .addEventListener("click", () => exportPalette("csv"));
   document
-    .getElementById('exportJSON')
-    .addEventListener('click', () => exportPalette('json'));
+    .getElementById("exportJSON")
+    .addEventListener("click", () => exportPalette("json"));
   document
-    .getElementById('exportPNG')
-    .addEventListener('click', () => exportPalette('png'));
+    .getElementById("exportPNG")
+    .addEventListener("click", () => exportPalette("png"));
   document
-    .getElementById('exportJPG')
-    .addEventListener('click', () => exportPalette('jpg'));
+    .getElementById("exportJPG")
+    .addEventListener("click", () => exportPalette("jpg"));
   document
-    .getElementById('exportCP')
-    .addEventListener('click', () => exportPalette('cp'));
+    .getElementById("exportCP")
+    .addEventListener("click", () => exportPalette("cp"));
   document
-    .getElementById('closeExportOptions')
-    .addEventListener('click', closeExportOptions);
+    .getElementById("closeExportOptions")
+    .addEventListener("click", closeExportOptions);
 }
 
 function exportPalette(format) {
-  const colors = Array.from(document.querySelectorAll('.color-box')).map(box => {
-    const rgb = box.style.backgroundColor.match(/\d+/g).map(Number);
-    const hex = rgbToHex(rgb[0], rgb[1], rgb[2]);
-    const name = box.querySelector('.color-name').textContent;
-    const hsl = rgbToHsl(rgb[0], rgb[1], rgb[2]);
-    const cmyk = rgbToCmyk(rgb[0], rgb[1], rgb[2]);
-    return { rgb, hex, name, hsl, cmyk };
-  });
+  const colors = Array.from(document.querySelectorAll(".color-box")).map(
+    (box) => {
+      const rgb = box.style.backgroundColor.match(/\d+/g).map(Number);
+      const hex = rgbToHex(rgb[0], rgb[1], rgb[2]);
+      const name = box.querySelector(".color-name").textContent;
+      const hsl = rgbToHsl(rgb[0], rgb[1], rgb[2]);
+      const cmyk = rgbToCmyk(rgb[0], rgb[1], rgb[2]);
+      return { rgb, hex, name, hsl, cmyk };
+    }
+  );
 
   switch (format) {
-    case 'csv':
+    case "csv":
       exportCSV(colors);
       break;
-    case 'json':
+    case "json":
       exportJSON(colors);
       break;
-    case 'png':
-    case 'jpg':
+    case "png":
+    case "jpg":
       exportImage(colors, format);
       break;
-    case 'cp':
+    case "cp":
       exportCP(colors);
       break;
   }
 }
 
-
 function parseJSONPalette(content) {
   try {
     const data = JSON.parse(content);
-    if (data.format === 'ChromaPalette') {
+    if (data.format === "ChromaPalette") {
       return data.colors;
     } else {
       return data;
     }
   } catch (error) {
-    console.error('Error parsing JSON:', error);
-    alert('Error parsing JSON file. Please make sure it\'s a valid palette file.');
+    console.error("Error parsing JSON:", error);
+    alert(
+      "Error parsing JSON file. Please make sure it's a valid palette file."
+    );
     return null;
   }
 }
 
-
 function parseCSVPalette(content) {
-  const lines = content.split('\n');
+  const lines = content.split("\n");
   const colors = [];
 
   for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(',');
+    const values = lines[i].split(",");
     if (values.length >= 7) {
       colors.push({
         name: values[0],
         hex: values[1],
         rgb: [parseInt(values[2]), parseInt(values[3]), parseInt(values[4])],
         hsl: [parseInt(values[5]), parseInt(values[6]), parseInt(values[7])],
-        cmyk: [parseInt(values[8]), parseInt(values[9]), parseInt(values[10]), parseInt(values[11])]
+        cmyk: [
+          parseInt(values[8]),
+          parseInt(values[9]),
+          parseInt(values[10]),
+          parseInt(values[11]),
+        ],
       });
     }
   }
@@ -898,17 +895,17 @@ function importPalette(file) {
     const fileContent = event.target.result;
     let colors;
 
-    if (file.name.endsWith('.cp') || file.name.endsWith('.json')) {
+    if (file.name.endsWith(".cp") || file.name.endsWith(".json")) {
       colors = parseJSONPalette(fileContent);
-    } else if (file.name.endsWith('.csv')) {
+    } else if (file.name.endsWith(".csv")) {
       colors = parseCSVPalette(fileContent);
     } else {
-      alert('Unsupported file format. Please use .cp, .json, or .csv files.');
+      alert("Unsupported file format. Please use .cp, .json, or .csv files.");
       return;
     }
 
     if (colors) {
-      displayColors(colors.map(color => color.rgb));
+      displayColors(colors.map((color) => color.rgb));
     }
   };
 
@@ -917,38 +914,39 @@ function importPalette(file) {
 
 function exportCP(colors) {
   const cpData = {
-    format: 'ChromaPalette',
-    version: '1.0',
-    colors: colors
+    format: "ChromaPalette",
+    version: "1.0",
+    colors: colors,
   };
   const json = JSON.stringify(cpData, null, 2);
-  downloadFile(json, 'palette.cp', 'application/json');
+  downloadFile(json, "palette.cp", "application/json");
 }
 
 function exportCSV(colors) {
-  let csv = 'Name,Hex,R,G,B,H,S,L,C,M,Y,K\n';
-  colors.forEach(color => {
-    csv += `${color.name},${color.hex},${color.rgb.join(',')},${color.hsl.join(',')},${color.cmyk.join(',')}\n`;
+  let csv = "Name,Hex,R,G,B,H,S,L,C,M,Y,K\n";
+  colors.forEach((color) => {
+    csv += `${color.name},${color.hex},${color.rgb.join(",")},${color.hsl.join(
+      ","
+    )},${color.cmyk.join(",")}\n`;
   });
-  downloadFile(csv, 'palette.csv', 'text/csv');
+  downloadFile(csv, "palette.csv", "text/csv");
 }
-
 
 function exportJSON(colors) {
   const json = JSON.stringify(colors, null, 2);
-  downloadFile(json, 'palette.json', 'application/json');
+  downloadFile(json, "palette.json", "application/json");
 }
 
 function exportImage(colors, format) {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
   const boxSize = 100;
   const padding = 10;
 
   canvas.width = colors.length * (boxSize + padding) + padding;
   canvas.height = boxSize + 2 * padding;
 
-  ctx.fillStyle = '#ffffff';
+  ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   colors.forEach((color, index) => {
@@ -958,15 +956,15 @@ function exportImage(colors, format) {
     ctx.fillStyle = color.hex;
     ctx.fillRect(x, y, boxSize, boxSize);
 
-    ctx.fillStyle = '#000000';
-    ctx.font = '12px Arial';
+    ctx.fillStyle = "#000000";
+    ctx.font = "12px Arial";
     ctx.fillText(color.hex, x + 5, y + boxSize - 25);
     ctx.fillText(color.name, x + 5, y + boxSize - 10);
   });
 
-  canvas.toBlob(blob => {
+  canvas.toBlob((blob) => {
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `palette.${format}`;
     a.click();
@@ -975,7 +973,7 @@ function exportImage(colors, format) {
 }
 
 function downloadFile(content, fileName, contentType) {
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   const file = new Blob([content], { type: contentType });
   a.href = URL.createObjectURL(file);
   a.download = fileName;
@@ -989,21 +987,21 @@ function createUploadWindow(type) {
   const left = (screen.width - windowWidth) / 2;
   const top = (screen.height - windowHeight) / 2;
 
-  const url = type === 'image' ? 'upload-image.html' : 'import-palette.html';
+  const url = type === "image" ? "upload-image.html" : "import-palette.html";
 
   const uploadWindow = window.open(
     url,
-    'uploadWindow',
+    "uploadWindow",
     `width=${windowWidth},height=${windowHeight},left=${left},top=${top},resizable=yes,scrollbars=yes`
   );
 }
 
-window.addEventListener('message', function(event) {
+window.addEventListener("message", function (event) {
   if (event.origin !== window.origin) return;
 
-  if (event.data.type === 'imageUploaded') {
+  if (event.data.type === "imageUploaded") {
     previewImage(event.data.file, event.data.imageData);
-  } else if (event.data.type === 'paletteImported') {
+  } else if (event.data.type === "paletteImported") {
     importPalette(event.data.file);
   }
 });
