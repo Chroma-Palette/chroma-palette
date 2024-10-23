@@ -94,12 +94,10 @@ function captureColors() {
   });
 }
 
-// This line is necessary for the script to be executable
+
 captureColors()
   .then((colors) => colors)
   .catch((error) => ({ error: error.toString() }));
-
-
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   return true;

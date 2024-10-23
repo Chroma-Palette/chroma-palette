@@ -164,13 +164,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-/**
- * Converts RGB color values to a hex code string.
- * @param {number} r - Red value (0-255)
- * @param {number} g - Green value (0-255)
- * @param {number} b - Blue value (0-255)
- * @return {string} Hex color code
- */
 function rgbToHex(r, g, b) {
   return (
     "#" +
@@ -178,11 +171,7 @@ function rgbToHex(r, g, b) {
   );
 }
 
-/**
- * Copies the given text to clipboard and shows feedback.
- * @param {string} text - Text to copy
- * @param {HTMLElement} colorBox - The color box element that was clicked
- */
+
 function copyToClipboard(text, colorBox, colors) {
   navigator.clipboard
     .writeText(text)
@@ -199,10 +188,6 @@ function copyToClipboard(text, colorBox, colors) {
     });
 }
 
-/**
- * Displays an error message in the popup interface.
- * @param {string} message - The error message to display
- */
 function displayError(message) {
   const palette = document.getElementById("palette");
   palette.innerHTML = `
@@ -214,11 +199,7 @@ function displayError(message) {
   palette.classList.remove("grid");
 }
 
-/**
- * Formats error messages for user-friendly display.
- * @param {string} message - The original error message
- * @return {string} Formatted error message
- */
+
 function formatErrorMessage(message) {
   if (message.includes("MAX_CAPTURE_VISIBLE_TAB_CALLS")) {
     return "Too many requests. Please wait a moment before trying again.";
@@ -601,9 +582,7 @@ function scrollToImagePreview() {
   }
 }
 
-// Update the previewImage function to reset the palette when a new image is loaded
 function previewImage(file, imageData) {
-  // Reset the palette first
   resetPalette();
 
   const imagePreviewContainer = document.getElementById("imagePreviewContainer");
@@ -618,15 +597,15 @@ function previewImage(file, imageData) {
   imagePreview.onload = function () {
     imagePreviewContainer.style.display = "block";
 
-    // Scroll to image preview
+
     setTimeout(scrollToImagePreview, 100);
 
-    // Add to history
+
     const colorThief = new ColorThief();
     const palette = colorThief.getPalette(imagePreview, 6);
     addToHistory(palette, "Uploaded Image");
 
-    // Reattach event listeners for the new buttons
+
     attachImagePreviewListeners();
   };
   
@@ -747,7 +726,7 @@ function displayColors(colors) {
     palette.appendChild(colorBox);
   });
 
-  // Show the export button
+
   const exportButton = document.getElementById("exportButton");
   if (exportButton) {
     exportButton.style.display = "block";

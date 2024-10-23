@@ -9,7 +9,6 @@ fileInput.addEventListener('change', (event) => {
       preview.src = e.target.result;
       preview.style.display = 'block';
       
-      // Send message to the main popup to update history
       window.opener.postMessage({ 
         type: 'imageUploaded', 
         file: file,

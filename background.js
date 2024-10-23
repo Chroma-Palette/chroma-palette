@@ -1,5 +1,3 @@
-// Add this to your existing background.js file
-
 chrome.action.onClicked.addListener((tab) => {
   chrome.action.setPopup({ tabId: tab.id, popup: 'popup.html' });
 });
@@ -12,14 +10,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   return true;
 });
 
-/**
- * This background script runs continuously and manages the extension's core functionality.
- * It handles communication between the popup and content scripts, and manages tab capturing.
- */
-
-/**
- * Listens for messages from the popup or content scripts.
- */
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'captureTab') {
       captureVisibleTab(sendResponse);
@@ -27,10 +17,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
   });
   
-  /**
-   * Captures the visible area of the current tab.
-   * @param {function} sendResponse - Callback function to send the captured image data
-   */
   function captureVisibleTab(sendResponse) {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       chrome.tabs.captureVisibleTab(null, { format: 'png' }, function (dataUrl) {
@@ -43,9 +29,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
   }
   
-  /**
-   * Listens for tab updates to refresh the extension icon if needed.
-   */
+
   chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete') {
       // You could add logic here to update the extension icon or state
@@ -53,9 +37,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
   });
   
-  /**
-   * Listens for installation or update of the extension.
-   */
+
   chrome.runtime.onInstalled.addListener((details) => {
     if (details.reason === 'install') {
       console.log('Extension installed');
