@@ -405,7 +405,7 @@ function showHistoryView() {
 function showMainView() {
   const content = document.querySelector(".content");
   content.innerHTML = `
-    <h1>Chroma Palette 🎨</h1>
+    <h1>Palettes & Hues 🎨</h1>
     <p class="instruction-text">Click on any color to copy its HEX code.</p>
     <div id="palette">
       <p class="initial-text">
@@ -426,7 +426,7 @@ function showMainView() {
       </a>
     </button>
     <button id="reviewButton">
-      <a href="https://chromewebstore.google.com/detail/chroma-palette-%F0%9F%8E%A8/miokoikjlpbhhfepkneagdjmgakendep/reviews" target="_blank">
+      <a href="https://chromewebstore.google.com/detail/palettes-hues-%F0%9F%8E%A8/miokoikjlpbhhfepkneagdjmgakendep/reviews" target="_blank">
         Leave a Review ⭐
       </a>
     </button>
@@ -906,7 +906,7 @@ function exportPalette(format) {
 function parseJSONPalette(content) {
   try {
     const data = JSON.parse(content);
-    if (data.format === "ChromaPalette") {
+    if (data.format === "custompalettes") {
       return data.colors;
     } else {
       return data;
@@ -970,7 +970,7 @@ function importPalette(file) {
 
 function exportCP(colors) {
   const cpData = {
-    format: "ChromaPalette",
+    format: "custompalettes",
     version: "1.0",
     colors: colors,
   };

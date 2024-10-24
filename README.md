@@ -1,10 +1,10 @@
-# Chroma Palette 🎨
+# Palettes & Hues 🎨
 
-![Chroma Palette 🎨 Logo](icon48.png)
+![Palettes & Hues 🎨 Logo](icon48.png)
 
 ## Description
 
-Chroma Palette 🎨 is a powerful Chrome extension that extracts the dominant color palette from the visible area of any webpage. Perfect for designers, developers, and color enthusiasts, Chroma Palette 🎨 provides instant access to key colors used in web design, enabling quick color scheme analysis and inspiration.
+Palettes & Hues 🎨 is a powerful Chrome extension that extracts the dominant color palette from the visible area of any webpage. Perfect for designers, developers, and color enthusiasts, Palettes & Hues 🎨 provides instant access to key colors used in web design, enabling quick color scheme analysis and inspiration.
 
 ## Features
 
@@ -23,7 +23,7 @@ Chroma Palette 🎨 is a powerful Chrome extension that extracts the dominant co
 ## Usage
 
 1. Navigate to any webpage
-2. Click the Chroma Palette 🎨 icon in your Chrome toolbar
+2. Click the Palettes & Hues 🎨 icon in your Chrome toolbar
 3. Click "Extract Palette" to analyze the visible area
 4. Click on any color swatch to copy its hex code
 
@@ -48,7 +48,7 @@ For support or queries, please open an issue or contact us at [mayank.singh08199
 
 ## Roadmap: Future Features
 
-To make Chroma Palette 🎨 the #1 color palette extension worldwide:
+To make Palettes & Hues 🎨 the #1 color palette extension worldwide:
 
 - [] Color Harmony Suggestions**: Provide complementary, analogous, and other color harmony suggestions based on extracted colors.
 
@@ -68,7 +68,7 @@ To make Chroma Palette 🎨 the #1 color palette extension worldwide:
 
 - [] **Color Trends**: Analyze and display color trends across popular websites or specific industries.
 
-- [] **API Access**: Provide an API for developers to integrate Chroma Palette 🎨's functionality into their own tools.
+- [] **API Access**: Provide an API for developers to integrate Palettes & Hues 🎨's functionality into their own tools.
 
 - [x] **Multiple Color Models**: Support RGB, HSL, CMYK, and other color models in addition to HEX.
 
@@ -96,4 +96,4 @@ To make Chroma Palette 🎨 the #1 color palette extension worldwide:
 
 
 
-By implementing these features progressively, Chroma Palette 🎨 can evolve into a comprehensive color tool that caters to a wide range of users, from casual enthusiasts to professional designers, solidifying its position as the leading color palette extension worldwide.
+By implementing these features progressively, Palettes & Hues 🎨 can evolve into a comprehensive color tool that caters to a wide range of users, from casual enthusiasts to professional designers, solidifying its position as the leading color palette extension worldwide.
