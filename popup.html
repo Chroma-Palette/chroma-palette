@@ -870,9 +870,36 @@
   transform: translateY(1px);
 }
     
+#randomPaletteButton {
+      width: 100%;
+      padding: 12px 16px;
+      background-color: #3a3a3a;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      margin-top: 16px;
+    }
+
+    #randomPaletteButton:hover {
+      background-color: #4a4a4a;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transform: translateY(-1px);
+    }
+
+    #randomPaletteButton:active {
+      background-color: #2a2a2a;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      transform: translateY(1px);
+    }
   </style>
 </head>
-
 <body>
   <div class="bubble-container"></div>
   <div class="content">
@@ -887,6 +914,7 @@
       </p>
     </div>
     <button id="analyzeButton">Extract Palette 🎨</button>
+    <button id="randomPaletteButton">Random Palette 🎲</button>
     <button id="colorPickerButton">Color Picker 🔍</button>
     <button id="importImageButton">Upload Image 🖼️</button>
     <button id="historyButton">View History 📜</button>
